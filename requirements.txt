@@ -1,0 +1,21 @@
+# 邮件读取
+imapclient>=2.3.1
+chardet>=5.2.0
+beautifulsoup4>=4.12.0
+
+# AI 分类
+langchain>=0.2.0
+langchain-community>=0.2.0
+dashscope>=1.20.0
+
+# 定时调度
+APScheduler>=3.10.4
+
+# 数据库
+# SQLite 为 Python 内置，无需额外安装
+
+# 配置管理
+python-dotenv>=1.0.0
+
+# 工具库
+pydantic>=2.0.0
