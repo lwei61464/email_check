@@ -114,7 +114,7 @@ class EmailScheduler:
         )
 
     def start(self):
-        """启动定时调度，阻塞运行。"""
+        """启动定时调度，阻塞运行。首次启动立即执行一次，后续按间隔轮询。"""
         interval_seconds = self.settings.poll_interval_seconds
         self._scheduler.add_job(
             self._run_pipeline,
@@ -122,7 +122,8 @@ class EmailScheduler:
             id="email_pipeline",
             replace_existing=True,
         )
-        logger.info("调度器启动，轮询间隔：%ss", interval_seconds)
+        logger.info("调度器启动，轮询间隔：%ss，立即执行首次检测", interval_seconds)
+        self._run_pipeline()
         try:
             self._scheduler.start()
         except (KeyboardInterrupt, SystemExit):

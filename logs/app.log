@@ -1,0 +1,428 @@
+2026-03-25 18:28:16,694 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-25 18:28:16,746 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-25 18:28:16,746 [INFO] scheduler: 调度器启动，轮询间隔：300s
+2026-03-25 18:28:16,749 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-25 18:28:16,749 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 18:38:37,443 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-25 18:38:37,454 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-25 18:38:37,465 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-25 18:38:37,465 [INFO] scheduler: 调度器启动，轮询间隔：300s
+2026-03-25 18:38:37,466 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-25 18:38:37,467 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-25 18:39:44,716 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-25 18:39:44,720 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-25 18:39:44,725 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-25 18:39:44,725 [INFO] scheduler: 调度器启动，轮询间隔：300s
+2026-03-25 18:39:44,726 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-25 18:39:44,726 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-26 12:12:47,437 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-26 12:12:47,449 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-26 12:12:47,461 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-26 12:12:47,461 [INFO] scheduler: 调度器启动，轮询间隔：60s，立即执行首次检测
+2026-03-26 12:12:47,461 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:12:48,257 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:12:48,700 [INFO] modules.mail_fetcher: 发现新邮件 41 封（未读共 41 封）
+2026-03-26 12:12:48,979 [INFO] scheduler: 处理邮件 UID=962 | 发件人: calendar@qq.com | 主题: 新面试
+2026-03-26 12:12:49,606 [INFO] modules.classifier: LangChain 调用链构建完成，模型: qwen-plus
+2026-03-26 12:12:57,773 [INFO] scheduler: 分类结果: transactional（置信度: 0.85）原因: QQ邮箱日历系统自动发送的事件提醒，属事务性通知
+2026-03-26 12:12:58,439 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 962
+2026-03-26 12:12:58,704 [INFO] scheduler: 处理邮件 UID=970 | 发件人: noreply@shmail.ibeisen.com | 主题: 请尽快完成浙江宇视科技有限公司发起的在线测评
+2026-03-26 12:13:07,537 [INFO] scheduler: 分类结果: important（置信度: 0.95）原因: 含明确截止时间（1月7日16:21），需立即完成招聘在线测评，需收件人紧急行动
+2026-03-26 12:13:08,169 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 970
+2026-03-26 12:13:08,169 [WARNING] modules.notifier: [重要邮件提醒] 发件人: Assessment <noreply@shmail.ibeisen.com> | 主题: 请尽快完成浙江宇视科技有限公司发起的在线测评 | 原因: 含明确截止时间（1月7日16:21），需立即完成招聘在线测评，需收件人紧急行动
+2026-03-26 12:13:08,483 [INFO] scheduler: 处理邮件 UID=1005 | 发件人: rm-mail@mobile.rakuten.co.jp | 主题: [楽天モバイル]eSIMプロファイルダウンロードのお願い
+2026-03-26 12:13:19,841 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: 乐天移动官方发送的eSIM开通事务通知，含个人号码与明确操作时效
+2026-03-26 12:13:20,276 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1005
+2026-03-26 12:13:20,531 [INFO] scheduler: 处理邮件 UID=1139 | 发件人: rmobile-notification@mobile.rakuten.co.jp | 主题: 【楽天モバイル】お支払い料金確定のお知らせ
+2026-03-26 12:13:30,890 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 乐天移动官方发出的月度账单确认通知，属事务性账单类邮件
+2026-03-26 12:13:31,557 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1139
+2026-03-26 12:13:31,856 [INFO] scheduler: 处理邮件 UID=1142 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: にほんご生活 受講についてのご返信
+2026-03-26 12:13:42,941 [ERROR] dashscope: 
+2026-03-26 12:13:43,003 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:16:45,141 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-26 12:16:45,153 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-26 12:16:45,159 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-26 12:16:45,159 [INFO] scheduler: 调度器启动，轮询间隔：60s，立即执行首次检测
+2026-03-26 12:16:45,159 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:16:45,838 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:16:46,220 [INFO] modules.mail_fetcher: 发现新邮件 37 封（未读共 41 封）
+2026-03-26 12:16:46,515 [INFO] scheduler: 处理邮件 UID=1142 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: にほんご生活 受講についてのご返信
+2026-03-26 12:16:47,078 [INFO] modules.classifier: LangChain 调用链构建完成，模型: qwen-plus
+2026-03-26 12:16:57,901 [INFO] scheduler: 分类结果: normal（置信度: 0.85）原因: 日语课程体验安排的双向工作沟通，无紧急行动要求
+2026-03-26 12:16:58,417 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1142
+2026-03-26 12:16:58,545 [INFO] scheduler: 处理邮件 UID=1143 | 发件人: bunkoku@chuo-ci.jp | 主题: ［CCIEA]CCIEAにほんご教室への申し込みについて
+2026-03-26 12:17:07,803 [INFO] scheduler: 分类结果: important（置信度: 0.85）原因: 课程报名资格否决通知，影响用户关键服务准入，需用户知悉并可能采取后续行动
+2026-03-26 12:17:08,455 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1143
+2026-03-26 12:17:08,455 [WARNING] modules.notifier: [重要邮件提醒] 发件人: CCIEA <bunkoku@chuo-ci.jp> | 主题: ［CCIEA]CCIEAにほんご教室への申し込みについて | 原因: 课程报名资格否决通知，影响用户关键服务准入，需用户知悉并可能采取后续行动
+2026-03-26 12:17:08,727 [INFO] scheduler: 处理邮件 UID=1144 | 发件人: news@e.cathaypacific.com | 主题: 畅飞全球*，限时至高85折*特惠！
+2026-03-26 12:17:18,159 [INFO] scheduler: 分类结果: newsletter（置信度: 0.95）原因: 官方news@邮箱发送的订阅类促销资讯，含退订入口，符合newsletter定义
+2026-03-26 12:17:18,818 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1144
+2026-03-26 12:17:19,020 [INFO] scheduler: 处理邮件 UID=1145 | 发件人: discover@airbnb.com | 主题: 我们的条款和隐私政策即将更新
+2026-03-26 12:17:28,886 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: 平台政策更新预告，无紧急行动要求，属常规合规通知
+2026-03-26 12:17:29,386 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1145
+2026-03-26 12:17:29,747 [INFO] scheduler: 处理邮件 UID=1147 | 发件人: email_info02@mufg.jp | 主题: スマホ決済へ登録はお済みですか?【三菱UFJデビット】
+2026-03-26 12:17:40,555 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: 银行官方服务推广邮件，已订阅用户定向发送，无需立即行动
+2026-03-26 12:17:41,099 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1147
+2026-03-26 12:17:41,323 [INFO] scheduler: 处理邮件 UID=1149 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: にほんご生活 受講についてのご返信
+2026-03-26 12:17:50,507 [INFO] scheduler: 分类结果: important（置信度: 0.85）原因: 含明确截止时间（明日11点前），需收件人及时确认是否等待开课
+2026-03-26 12:17:51,203 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1149
+2026-03-26 12:17:51,203 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: Re: にほんご生活 受講についてのご返信 | 原因: 含明确截止时间（明日11点前），需收件人及时确认是否等待开课
+2026-03-26 12:17:51,955 [INFO] scheduler: 处理邮件 UID=1150 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: にほんご生活 受講についてのご返信
+2026-03-26 12:18:01,857 [INFO] scheduler: 分类结果: important（置信度: 0.92）原因: 含明确截止时间（明日13:55前到场）及必须线下参与的行动要求
+2026-03-26 12:18:02,523 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1150
+2026-03-26 12:18:02,523 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: Re: にほんご生活 受講についてのご返信 | 原因: 含明确截止时间（明日13:55前到场）及必须线下参与的行动要求
+2026-03-26 12:18:03,180 [INFO] scheduler: 处理邮件 UID=1151 | 发件人: nihongo-seikatsu@msn.com | 主题: ２/２８体験授業のお知らせ
+2026-03-26 12:18:12,445 [INFO] scheduler: 分类结果: important（置信度: 0.92）原因: 需收件人于2月28日13:55前准时到场参加体验课，含明确行动要求和截止时间
+2026-03-26 12:18:13,436 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1151
+2026-03-26 12:18:13,436 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: ２/２８体験授業のお知らせ | 原因: 需收件人于2月28日13:55前准时到场参加体验课，含明确行动要求和截止时间
+2026-03-26 12:18:14,199 [INFO] scheduler: 处理邮件 UID=1152 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: ２/２８体験授業のお知らせ
+2026-03-26 12:18:22,620 [INFO] scheduler: 分类结果: important（置信度: 0.92）原因: 需本人明日按时参加线下体验课，含明确时间地点及行动承诺
+2026-03-26 12:18:23,639 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1152
+2026-03-26 12:18:23,639 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: Re: ２/２８体験授業のお知らせ | 原因: 需本人明日按时参加线下体验课，含明确时间地点及行动承诺
+2026-03-26 12:18:23,881 [INFO] scheduler: 处理邮件 UID=1153 | 发件人: ccsvc@message.cmbchina.com | 主题: 每日信用管家
+2026-03-26 12:18:30,883 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 招商银行官方发送的信用卡日度交易与额度对账通知
+2026-03-26 12:18:31,535 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1153
+2026-03-26 12:18:32,445 [INFO] scheduler: 处理邮件 UID=1154 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: ２/２８体験授業のお知らせ
+2026-03-26 12:18:42,153 [INFO] scheduler: 分类结果: important（置信度: 0.85）原因: 日语课程体验后分组调整及后续上课安排确认，需用户关注跟进
+2026-03-26 12:18:42,791 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1154
+2026-03-26 12:18:42,791 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: Re: ２/２８体験授業のお知らせ | 原因: 日语课程体验后分组调整及后续上课安排确认，需用户关注跟进
+2026-03-26 12:18:43,088 [INFO] scheduler: 处理邮件 UID=1157 | 发件人: uber@uber.com | 主题: Liu，欢迎您！🤗
+2026-03-26 12:18:50,917 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: Uber One 会员开通成功的服务开通通知，属事务性通知
+2026-03-26 12:18:51,569 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1157
+2026-03-26 12:18:51,745 [INFO] scheduler: 处理邮件 UID=1158 | 发件人: request@sakura-house.com | 主题: SAKURA HOUSE: Thank you for your INQUIRY (Traditional Chinese)
+ WEIQIANG LIU-san!
+2026-03-26 12:19:05,476 [INFO] scheduler: 分类结果: normal（置信度: 0.85）原因: 客服自动确认回执，属日常业务沟通，无需立即行动
+2026-03-26 12:19:06,004 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1158
+2026-03-26 12:19:06,167 [INFO] scheduler: 处理邮件 UID=1159 | 发件人: info@sakura-house.com | 主题: Re: SAKURA HOUSE: Thank you for your INQUIRY (Traditional Chinese)
+ WEIQIANG LIU-san!
+2026-03-26 12:19:12,981 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: 酒店退房最终付款通知，含确认金额、截止时间及专属支付链接
+2026-03-26 12:19:13,297 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1159
+2026-03-26 12:19:13,452 [INFO] scheduler: 处理邮件 UID=1162 | 发件人: nihongo-seikatsu@msn.com | 主题: 【ご案内】にほんご生活　3/7  しゃべり��
+2026-03-26 12:19:22,138 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: 外部日语课程活动通知，无紧急行动要求，属常规服务沟通
+2026-03-26 12:19:22,476 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1162
+2026-03-26 12:19:22,763 [INFO] scheduler: 处理邮件 UID=1163 | 发件人: nihongo-seikatsu@msn.com | 主题: Re: 【ご案内】にほんご生活　3/7  しゃべり��
+2026-03-26 12:19:31,708 [INFO] scheduler: 分类结果: important（置信度: 0.85）原因: 对方明确询问后续课程参与可能性，需发件人确认回复，属需行动的重要工作沟通
+2026-03-26 12:19:32,078 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1163
+2026-03-26 12:19:32,079 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: Re: 【ご案内】にほんご生活　3/7  しゃべり�� | 原因: 对方明确询问后续课程参与可能性，需发件人确认回复，属需行动的重要工作沟通
+2026-03-26 12:19:32,325 [INFO] scheduler: 处理邮件 UID=1164 | 发件人: mail@direct-11.bk.mufg.jp | 主题: （三菱ＵＦＪ銀行）インターネットバンキングログインパスワード登録完了のお知らせ
+2026-03-26 12:19:37,969 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: 银行密码重置完成通知，属账户安全类事务性通知
+2026-03-26 12:19:38,570 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1164
+2026-03-26 12:19:38,801 [INFO] scheduler: 处理邮件 UID=1165 | 发件人: ccsvc@message.cmbchina.com | 主题: 每日信用管家
+2026-03-26 12:19:45,697 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 招商银行信用卡官方发送的每日交易对账通知，含额度、积分及具体消费明细
+2026-03-26 12:19:46,164 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1165
+2026-03-26 12:19:46,371 [INFO] scheduler: 处理邮件 UID=1166 | 发件人: account-security-noreply@accountprotection.microsoft.com | 主题: 你的一次性代码
+2026-03-26 12:19:52,441 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 提供一次性登录验证码，属于身份验证类事务性通知
+2026-03-26 12:19:52,857 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1166
+2026-03-26 12:19:53,159 [INFO] scheduler: 处理邮件 UID=1167 | 发件人: uber.japan@uber.com | 主题: 【重要】Uber Eatsアプリ外の購入・配達依頼はお控えください
+2026-03-26 12:20:02,832 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: 平台通用合规提醒，无行动要求，属日常工作环境中的系统通知
+2026-03-26 12:20:03,534 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1167
+2026-03-26 12:20:03,817 [INFO] scheduler: 处理邮件 UID=1171 | 发件人: noreply@uber.com | 主题: 您星期四晚上的 Uber Eats 优食订单
+2026-03-26 12:20:10,131 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: Uber Eats 订单收据，含交易金额、时间、付款方式及完成状态
+2026-03-26 12:20:10,553 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1171
+2026-03-26 12:20:10,892 [INFO] scheduler: 处理邮件 UID=1172 | 发件人: uber@uber.com | 主题: 新鲜优惠，趁热享用
+2026-03-26 12:20:19,222 [INFO] scheduler: 分类结果: spam（置信度: 0.95）原因: 主题含促销词，正文为无个性化诱导营销内容，含大量隐藏控制字符，属批量广告邮件
+2026-03-26 12:20:19,691 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:20:21,239 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-26 12:20:21,241 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-26 12:20:21,244 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-26 12:20:21,244 [INFO] scheduler: 调度器启动，轮询间隔：60s，立即执行首次检测
+2026-03-26 12:20:21,244 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:20:21,950 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:20:22,318 [INFO] modules.mail_fetcher: 发现新邮件 16 封（未读共 41 封）
+2026-03-26 12:20:22,700 [INFO] scheduler: 处理邮件 UID=1172 | 发件人: uber@uber.com | 主题: 新鲜优惠，趁热享用
+2026-03-26 12:20:23,191 [INFO] modules.classifier: LangChain 调用链构建完成，模型: qwen-plus
+2026-03-26 12:20:33,017 [INFO] scheduler: 分类结果: spam（置信度: 0.92）原因: 主题和正文均为强促销话术，无工作关联，含诱导点击，符合垃圾邮件定义
+2026-03-26 12:20:33,875 [INFO] modules.blacklist: 发件人 uber@uber.com 已记录 1 次 spam，阈值 3，暂不加入黑名单
+2026-03-26 12:20:33,875 [INFO] modules.mail_handler: Spam（高置信 0.92）→ 复制到垃圾隔离，发件人 uber@uber.com 未达加黑名单阈值
+2026-03-26 12:20:34,323 [INFO] scheduler: 处理邮件 UID=1178 | 发件人: uberone@uber.com | 主题: 照单采购，享受 ￥0 派送费优惠
+2026-03-26 12:20:45,368 [INFO] scheduler: 分类结果: newsletter（置信度: 0.92）原因: Uber One会员权益订阅推送，含退订入口与批量商户优惠列表
+2026-03-26 12:20:46,092 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1178
+2026-03-26 12:20:46,271 [INFO] scheduler: 处理邮件 UID=1180 | 发件人: nihongo-seikatsu@msn.com | 主题: 【ご案内】にほんご生活　3/14  しゃべり��
+2026-03-26 12:20:55,292 [INFO] scheduler: 分类结果: important（置信度: 0.85）原因: 含明确上课时间地点、需准时到场并携带物品，且要求缺席须提前告知，需立即行动
+2026-03-26 12:20:56,150 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1180
+2026-03-26 12:20:56,150 [WARNING] modules.notifier: [重要邮件提醒] 发件人: にほんご生活 nihongo-seikatsu <nihongo-seikatsu@msn.com> | 主题: 【ご案内】にほんご生活　3/14  しゃべり�� | 原因: 含明确上课时间地点、需准时到场并携带物品，且要求缺席须提前告知，需立即行动
+2026-03-26 12:20:56,430 [INFO] scheduler: 处理邮件 UID=1181 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ
+2026-03-26 12:21:03,538 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 三菱UFJ银行发出的VISA借记卡实时交易通知，含金额、商户等关键交易信息
+2026-03-26 12:21:04,227 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1181
+2026-03-26 12:21:04,605 [INFO] scheduler: 处理邮件 UID=1182 | 发件人: ubereats@uber.com | 主题: 对订单感到满意吗？立即使用优步乘客端乘车
+2026-03-26 12:21:13,940 [INFO] scheduler: 分类结果: spam（置信度: 0.85）原因: 无个人称呼，纯广告推广，含诱导性行动号召，大量异常空白字符，与工作完全无关
+2026-03-26 12:21:14,351 [INFO] modules.mail_handler: 已创建 IMAP 文件夹: 待审核
+2026-03-26 12:21:15,029 [INFO] modules.mail_handler: Spam（低置信 0.85）→ 复制到待审核，INBOX 原件保留，发件人 ubereats@uber.com 不加黑名单
+2026-03-26 12:21:15,399 [INFO] scheduler: 处理邮件 UID=1183 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ
+2026-03-26 12:21:21,144 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 银行官方发出的实时信用卡交易通知，属典型事务性通知
+2026-03-26 12:21:21,813 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1183
+2026-03-26 12:21:22,180 [INFO] scheduler: 处理邮件 UID=1187 | 发件人: uber@uber.com | 主题: 对订单感到满意吗？立即使用优步乘客端乘车
+2026-03-26 12:21:32,961 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: 官方App服务推广邮件，无事务性要素、无订阅标识、无紧急行动要求
+2026-03-26 12:21:33,841 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1187
+2026-03-26 12:21:34,199 [INFO] scheduler: 处理邮件 UID=1188 | 发件人: uber@uber.com | 主题: 我们刚刚为您所在地区添加了新餐厅
+2026-03-26 12:21:43,693 [INFO] scheduler: 分类结果: newsletter（置信度: 0.85）原因: Uber Eats平台定期推送的新餐厅资讯，属用户订阅的商业资讯邮件
+2026-03-26 12:21:44,334 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1188
+2026-03-26 12:21:44,597 [INFO] scheduler: 处理邮件 UID=1189 | 发件人: uber@uber.com | 主题: Uber Eats 优食具备超乎您想象的众多功能 👀
+2026-03-26 12:21:55,920 [INFO] scheduler: 分类结果: newsletter（置信度: 0.85）原因: 官方订阅类营销邮件，含退订入口，推广App功能与商品，非事务性或紧急工作内容
+2026-03-26 12:21:56,405 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1189
+2026-03-26 12:21:56,529 [INFO] scheduler: 处理邮件 UID=1191 | 发件人: info@mail-jcn.dnp-cdms.jp | 主题: 認証コード発行のご連絡（三菱UFJ-VISAデビット・VISAビジネスデビット）
+2026-03-26 12:22:04,726 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 银行支付工具发出的实时认证码及交易通知，属典型事务性通知
+2026-03-26 12:22:05,074 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1191
+2026-03-26 12:22:05,344 [INFO] scheduler: 处理邮件 UID=1195 | 发件人: news@e.cathaypacific.com | 主题: 布里斯班专属优惠，至高立减600元*！
+2026-03-26 12:22:14,378 [INFO] scheduler: 分类结果: newsletter（置信度: 0.92）原因: 官方news@邮箱发送的已订阅航空优惠资讯，含退订入口
+2026-03-26 12:22:14,809 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1195
+2026-03-26 12:22:15,079 [INFO] scheduler: 处理邮件 UID=1196 | 发件人: do_not_reply@navicat.com | 主题: Navicat IDのアクティベート
+2026-03-26 12:22:25,111 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: Navicat账号注册后的邮箱验证通知，属事务性开通流程
+2026-03-26 12:22:25,609 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1196
+2026-03-26 12:22:25,732 [INFO] scheduler: 处理邮件 UID=1234 | 发件人: request@sakura-house.com | 主题: SAKURA HOUSE: Payment completed by WEIQIANG LIU-san
+2026-03-26 12:22:31,281 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 酒店支付完成通知，含具体日期、金额，属事务性收据
+2026-03-26 12:22:31,590 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1234
+2026-03-26 12:22:31,937 [INFO] scheduler: 处理邮件 UID=1235 | 发件人: request@sakura-house.com | 主题: SAKURA HOUSE: Thank you for completing your reservation,
+ WEIQIANG-san
+2026-03-26 12:22:39,052 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: 酒店住宿预订成功确认，含唯一房号、入住时间及关键操作指引
+2026-03-26 12:22:39,648 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1235
+2026-03-26 12:22:39,977 [INFO] scheduler: 处理邮件 UID=1236 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ
+2026-03-26 12:22:47,320 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 银行官方发送的VISA借记卡实时交易通知，含金额、商户、持卡人信息
+2026-03-26 12:22:47,967 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1236
+2026-03-26 12:22:48,199 [INFO] scheduler: 处理邮件 UID=1237 | 发件人: no-reply@github.com | 主题: Important Update to GitHub Copilot Interaction Data Usage Policy
+2026-03-26 12:22:55,195 [INFO] scheduler: 分类结果: important（置信度: 0.92）原因: 含明确截止时间（4月24日）并要求用户主动调整Copilot数据设置，需立即处理
+2026-03-26 12:22:55,773 [INFO] modules.mail_handler: Important → INBOX 已标星，复制到 重要邮件，UID: 1237
+2026-03-26 12:22:55,773 [WARNING] modules.notifier: [重要邮件提醒] 发件人: GitHub <no-reply@github.com> | 主题: Important Update to GitHub Copilot Interaction Data Usage Policy | 原因: 含明确截止时间（4月24日）并要求用户主动调整Copilot数据设置，需立即处理
+2026-03-26 12:22:56,638 [INFO] modules.mail_handler: 已清理 垃圾隔离 过期副本 2 封（截止日期: 2026-03-19）
+2026-03-26 12:22:57,711 [INFO] modules.mail_handler: 已清理 待审核 过期副本 1 封（截止日期: 2026-03-12）
+2026-03-26 12:22:57,780 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:22:57,782 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-26 12:22:57,782 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-26 12:23:21,248 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:24:21 JST)" (scheduled at 2026-03-26 12:23:21.244546+09:00)
+2026-03-26 12:23:21,249 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:23:21,900 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:23:22,378 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:23:22,378 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:23:22,444 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:23:22,446 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:24:21 JST)" executed successfully
+2026-03-26 12:24:21,247 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:25:21 JST)" (scheduled at 2026-03-26 12:24:21.244546+09:00)
+2026-03-26 12:24:21,248 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:24:21,925 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:24:22,361 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:24:22,362 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:24:22,430 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:24:22,431 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:25:21 JST)" executed successfully
+2026-03-26 12:25:21,251 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:26:21 JST)" (scheduled at 2026-03-26 12:25:21.244546+09:00)
+2026-03-26 12:25:21,252 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:25:21,864 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:25:22,217 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:25:22,217 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:25:22,279 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:25:22,281 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:26:21 JST)" executed successfully
+2026-03-26 12:26:21,247 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:27:21 JST)" (scheduled at 2026-03-26 12:26:21.244546+09:00)
+2026-03-26 12:26:21,248 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:26:21,928 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:26:22,300 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:26:22,300 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:26:22,362 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:26:22,364 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:27:21 JST)" executed successfully
+2026-03-26 12:27:21,246 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:28:21 JST)" (scheduled at 2026-03-26 12:27:21.244546+09:00)
+2026-03-26 12:27:21,246 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:27:21,842 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:27:22,188 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:27:22,188 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:27:22,249 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:27:22,250 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:28:21 JST)" executed successfully
+2026-03-26 12:28:21,250 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:29:21 JST)" (scheduled at 2026-03-26 12:28:21.244546+09:00)
+2026-03-26 12:28:21,250 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:28:21,880 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:28:22,223 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:28:22,224 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:28:22,289 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:28:22,290 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:29:21 JST)" executed successfully
+2026-03-26 12:29:21,251 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:30:21 JST)" (scheduled at 2026-03-26 12:29:21.244546+09:00)
+2026-03-26 12:29:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:29:23,520 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:29:23,895 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:29:23,895 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:29:23,964 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:29:23,966 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:30:21 JST)" executed successfully
+2026-03-26 12:30:21,251 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:31:21 JST)" (scheduled at 2026-03-26 12:30:21.244546+09:00)
+2026-03-26 12:30:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:30:21,848 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:30:22,239 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:30:22,239 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:30:22,301 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:30:22,302 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:31:21 JST)" executed successfully
+2026-03-26 12:31:21,247 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:32:21 JST)" (scheduled at 2026-03-26 12:31:21.244546+09:00)
+2026-03-26 12:31:21,247 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:31:21,882 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:31:22,220 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:31:22,220 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:31:22,281 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:31:22,283 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:32:21 JST)" executed successfully
+2026-03-26 12:32:21,255 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:33:21 JST)" (scheduled at 2026-03-26 12:32:21.244546+09:00)
+2026-03-26 12:32:21,255 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:32:21,916 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:32:22,302 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:32:22,302 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:32:22,371 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:32:22,373 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:33:21 JST)" executed successfully
+2026-03-26 12:33:21,246 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:34:21 JST)" (scheduled at 2026-03-26 12:33:21.244546+09:00)
+2026-03-26 12:33:21,247 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:33:22,005 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:33:22,362 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:33:22,362 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:33:22,425 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:33:22,427 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:34:21 JST)" executed successfully
+2026-03-26 12:34:21,255 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:35:21 JST)" (scheduled at 2026-03-26 12:34:21.244546+09:00)
+2026-03-26 12:34:21,255 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:34:21,851 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:34:22,260 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:34:22,260 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:34:22,320 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:34:22,321 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:35:21 JST)" executed successfully
+2026-03-26 12:43:36,518 [WARNING] apscheduler.executors.default: Run time of job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:44:21 JST)" was missed by 0:00:15.274119
+2026-03-26 12:44:21,252 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:45:21 JST)" (scheduled at 2026-03-26 12:44:21.244546+09:00)
+2026-03-26 12:44:21,253 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:44:21,950 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:44:22,435 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:44:22,435 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:44:22,504 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:44:22,506 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:45:21 JST)" executed successfully
+2026-03-26 12:45:21,258 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:46:21 JST)" (scheduled at 2026-03-26 12:45:21.244546+09:00)
+2026-03-26 12:45:21,259 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:45:21,902 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:45:22,268 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:45:22,268 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:45:22,333 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:45:22,335 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:46:21 JST)" executed successfully
+2026-03-26 12:46:21,249 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:47:21 JST)" (scheduled at 2026-03-26 12:46:21.244546+09:00)
+2026-03-26 12:46:21,250 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:46:22,648 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:46:23,083 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:46:23,083 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:46:23,160 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:46:23,163 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:47:21 JST)" executed successfully
+2026-03-26 12:47:21,251 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:48:21 JST)" (scheduled at 2026-03-26 12:47:21.244546+09:00)
+2026-03-26 12:47:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:47:21,860 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:47:22,253 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:47:22,253 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:47:22,316 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:47:22,318 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:48:21 JST)" executed successfully
+2026-03-26 12:48:21,254 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:49:21 JST)" (scheduled at 2026-03-26 12:48:21.244546+09:00)
+2026-03-26 12:48:21,255 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:48:21,993 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:48:22,356 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:48:22,356 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:48:22,422 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:48:22,424 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:49:21 JST)" executed successfully
+2026-03-26 12:49:21,252 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:50:21 JST)" (scheduled at 2026-03-26 12:49:21.244546+09:00)
+2026-03-26 12:49:21,252 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:49:21,949 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:49:22,301 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:49:22,302 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:49:22,363 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:49:22,365 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:50:21 JST)" executed successfully
+2026-03-26 12:50:21,247 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:51:21 JST)" (scheduled at 2026-03-26 12:50:21.244546+09:00)
+2026-03-26 12:50:21,247 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:50:21,883 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:50:22,232 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:50:22,232 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:50:22,294 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:50:22,297 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:51:21 JST)" executed successfully
+2026-03-26 12:51:21,250 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:52:21 JST)" (scheduled at 2026-03-26 12:51:21.244546+09:00)
+2026-03-26 12:51:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:51:21,867 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:51:22,226 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:51:22,226 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:51:22,291 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:51:22,293 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:52:21 JST)" executed successfully
+2026-03-26 12:52:21,248 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:53:21 JST)" (scheduled at 2026-03-26 12:52:21.244546+09:00)
+2026-03-26 12:52:21,249 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:52:21,876 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:52:22,241 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:52:22,241 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:52:22,306 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:52:22,308 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:53:21 JST)" executed successfully
+2026-03-26 12:53:21,250 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:54:21 JST)" (scheduled at 2026-03-26 12:53:21.244546+09:00)
+2026-03-26 12:53:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:53:21,924 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:53:22,330 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:53:22,330 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:53:22,397 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:53:22,399 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:54:21 JST)" executed successfully
+2026-03-26 12:54:21,250 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:55:21 JST)" (scheduled at 2026-03-26 12:54:21.244546+09:00)
+2026-03-26 12:54:21,251 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-26 12:54:22,061 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-26 12:54:22,457 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 41 封）
+2026-03-26 12:54:22,457 [INFO] scheduler: 本轮无新邮件
+2026-03-26 12:54:22,519 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-26 12:54:22,520 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-26 12:55:21 JST)" executed successfully
+2026-03-26 12:55:21,252 [INFO] scheduler: 调度器已停止。
+2026-03-30 18:36:08,783 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-30 18:36:08,793 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-30 18:36:08,800 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-30 18:36:08,800 [INFO] scheduler: 调度器启动，轮询间隔：60s，立即执行首次检测
+2026-03-30 18:36:08,801 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:36:09,671 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:36:10,154 [INFO] modules.mail_fetcher: 发现新邮件 9 封（未读共 46 封）
+2026-03-30 18:36:10,481 [INFO] scheduler: 处理邮件 UID=1238 | 发件人: information@mobile.rakuten.co.jp | 主题: 【追加料金0円】パ・リーグ＆ファーム9球団の主催公式戦が観れる！(2026/3/26)
+2026-03-30 18:36:11,037 [INFO] modules.classifier: LangChain 调用链构建完成，模型: qwen-plus
+2026-03-30 18:36:23,962 [INFO] scheduler: 分类结果: normal（置信度: 0.85）原因: 乐天移动官方发送的已购服务权益更新通知，无需立即行动
+2026-03-30 18:36:24,577 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1238
+2026-03-30 18:36:24,955 [INFO] scheduler: 处理邮件 UID=1240 | 发件人: email_info02@mufg.jp | 主题: 自動車ローンの金利を抑えたいあなたへ
+2026-03-30 18:36:32,655 [INFO] scheduler: 分类结果: spam（置信度: 0.95）原因: 主题含‘ローン’（贷款），属冷推销冷邮件，无个人称呼，多诱导链接
+2026-03-30 18:36:33,485 [INFO] modules.blacklist: 发件人 email_info02@mufg.jp 已记录 1 次 spam，阈值 3，暂不加入黑名单
+2026-03-30 18:36:33,485 [INFO] modules.mail_handler: Spam（高置信 0.95）→ 复制到垃圾隔离，发件人 email_info02@mufg.jp 未达加黑名单阈值
+2026-03-30 18:36:33,855 [INFO] scheduler: 处理邮件 UID=1241 | 发件人: ccsvc@message.cmbchina.com | 主题: 每日信用管家
+2026-03-30 18:36:38,975 [INFO] scheduler: 分类结果: transactional（置信度: 0.95）原因: 招商银行信用卡每日账单通知，含实时额度、积分及具体消费明细
+2026-03-30 18:36:39,498 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1241
+2026-03-30 18:36:39,869 [INFO] scheduler: 处理邮件 UID=1242 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ
+2026-03-30 18:36:46,195 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 三菱UFJ银行官方发送的VISA借记卡实时交易通知
+2026-03-30 18:36:46,754 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1242
+2026-03-30 18:36:46,946 [INFO] scheduler: 处理邮件 UID=1243 | 发件人: mailrecall_admin@qq.com | 主题: [撤回邮件失败] 本日の授業欠席のご連絡
+2026-03-30 18:36:54,777 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: QQ邮箱系统发出的邮件撤回失败通知，属工作通信链路的状态反馈，无需立即行动
+2026-03-30 18:36:55,138 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1243
+2026-03-30 18:36:55,394 [INFO] scheduler: 处理邮件 UID=1245 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ
+2026-03-30 18:37:02,007 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 三菱UFJ银行发出的VISA借记卡实时交易通知，属事务性支付提醒
+2026-03-30 18:37:02,602 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1245
+2026-03-30 18:37:02,795 [INFO] scheduler: 处理邮件 UID=1246 | 发件人: mail@direct-11.bk.mufg.jp | 主题: （三菱ＵＦＪ銀行）インターネットバンキングログインパスワード登録完了のお知らせ
+2026-03-30 18:37:09,000 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 银行互联网银行密码注册完成通知，属账户安全类事务性操作确认
+2026-03-30 18:37:10,022 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1246
+2026-03-30 18:37:10,233 [INFO] scheduler: 处理邮件 UID=1248 | 发件人: ccsvc@message.cmbchina.com | 主题: 每日信用管家
+2026-03-30 18:37:16,273 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 招商银行发送的实时信用额度、积分及具体交易明细通知，属银行事务性账单类通知
+2026-03-30 18:37:16,968 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1248
+2026-03-30 18:37:17,256 [INFO] scheduler: 处理邮件 UID=1249 | 发件人: news@e.cathaypacific.com | 主题: 往返3,783元*起，飞抵西澳，逐梦珀斯
+2026-03-30 18:37:28,090 [INFO] scheduler: 分类结果: newsletter（置信度: 0.85）原因: news@官方域名，含订阅声明与退订入口，属品牌订阅资讯
+2026-03-30 18:37:28,639 [INFO] modules.mail_handler: Newsletter → 复制到 订阅资讯，INBOX 原件保留，UID: 1249
+2026-03-30 18:37:29,528 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:37:29,531 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-30 18:37:29,531 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-30 18:38:08,809 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:39:08 JST)" (scheduled at 2026-03-30 18:38:08.800634+09:00)
+2026-03-30 18:38:08,810 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:38:09,529 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:38:09,972 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 46 封）
+2026-03-30 18:38:09,972 [INFO] scheduler: 本轮无新邮件
+2026-03-30 18:38:10,039 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:38:10,041 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:39:08 JST)" executed successfully
+2026-03-30 18:39:08,806 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:40:08 JST)" (scheduled at 2026-03-30 18:39:08.800634+09:00)
+2026-03-30 18:39:08,806 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:39:09,445 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:39:09,872 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 46 封）
+2026-03-30 18:39:09,873 [INFO] scheduler: 本轮无新邮件
+2026-03-30 18:39:09,939 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:39:09,940 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:40:08 JST)" executed successfully
+2026-03-30 18:40:08,806 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:41:08 JST)" (scheduled at 2026-03-30 18:40:08.800634+09:00)
+2026-03-30 18:40:08,806 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:40:09,512 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:40:09,865 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 46 封）
+2026-03-30 18:40:09,865 [INFO] scheduler: 本轮无新邮件
+2026-03-30 18:40:09,931 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:40:09,933 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:41:08 JST)" executed successfully
+2026-03-30 18:41:08,803 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:42:08 JST)" (scheduled at 2026-03-30 18:41:08.800634+09:00)
+2026-03-30 18:41:08,803 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:41:09,466 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:41:09,809 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 46 封）
+2026-03-30 18:41:09,810 [INFO] scheduler: 本轮无新邮件
+2026-03-30 18:41:09,870 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:41:09,872 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:42:08 JST)" executed successfully
+2026-03-30 18:42:08,806 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:43:08 JST)" (scheduled at 2026-03-30 18:42:08.800634+09:00)
+2026-03-30 18:42:08,806 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-30 18:42:09,428 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-30 18:42:09,804 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 46 封）
+2026-03-30 18:42:09,805 [INFO] scheduler: 本轮无新邮件
+2026-03-30 18:42:09,866 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-30 18:42:09,868 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:43:08 JST)" executed successfully
+2026-03-30 18:43:08,813 [INFO] scheduler: 调度器已停止。

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest tests/ -v)",
+      "Bash(netstat -ano)",
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_37bd72a0360a666a__ echo \"=== /api/emails \\(pagination\\) ===\" curl -s \"$BASE/api/emails?page=1&page_size=5\")",
+      "Bash(python -m json.tool)",
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_9da670033874cc27__ echo \"=== POST /api/blacklist \\(verbose curl\\) ===\" curl -v -X POST \"$BASE/api/blacklist\" -H \"Content-Type: application/json\" -d \"{\"\"address\"\":\"\"test@spam.com\"\",\"\"list_type\"\":\"\"blacklist\"\",\"\"reason\"\":\"\"test\"\"}\" 2)",
+      "Bash(1 __NEW_LINE_9da670033874cc27__ echo \"\" echo \"=== DELETE /api/blacklist ===\" curl -s -X DELETE \"$BASE/api/blacklist\" -H \"Content-Type: application/json\" -d \"{\"\"address\"\":\"\"test@spam.com\"\",\"\"list_type\"\":\"\"blacklist\"\"}\")",
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_9cbbfb785b066883__ echo \"=== Boundary: Empty address ===\" curl -s -X POST \"$BASE/api/blacklist\" -H \"Content-Type: application/json\" -d \"{\"\"address\"\":\"\"\"\",\"\"list_type\"\":\"\"blacklist\"\",\"\"reason\"\":\"\"\"\"}\")",
+      "Bash(python -m json.tool __NEW_LINE_9cbbfb785b066883__ echo \"\" echo \"=== Boundary: Invalid list_type ===\" curl -s -X POST \"$BASE/api/blacklist\" -H \"Content-Type: application/json\" -d \"{\"\"address\"\":\"\"test@test.com\"\",\"\"list_type\"\":\"\"invalid\"\",\"\"reason\"\":\"\"\"\"}\")",
+      "Bash(python -m json.tool __NEW_LINE_9cbbfb785b066883__ echo \"\" echo \"=== Boundary: Invalid list_type on GET ===\" curl -s \"$BASE/api/blacklist?list_type=invalid\")",
+      "Bash(python -m json.tool __NEW_LINE_9cbbfb785b066883__ echo \"\" echo \"=== Boundary: stats recent limit out of range ===\" curl -s \"$BASE/api/emails/recent?limit=999\")",
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_28714d43ee53f3a7__ echo \"=== Page routes \\(HTML rendering\\) ===\" echo \"-- / \\(dashboard\\) --\" curl -s \"$BASE/\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"-- /emails --\" curl -s \"$BASE/emails\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"-- /blacklist --\" curl -s \"$BASE/blacklist\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"\" echo \"=== Check HTML structure - data-theme attribute ===\" curl -s \"$BASE/\")",
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_1dcb489ce6d4a577__ echo \"=== Check CSS variables in style.css ===\" curl -s \"$BASE/static/style.css\")"
+    ]
+  }
+}

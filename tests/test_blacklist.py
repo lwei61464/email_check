@@ -81,6 +81,25 @@ class TestAddToWhitelist:
         blacklist_manager.add_to_whitelist("dup@corp.com")
         assert blacklist_manager.check("dup@corp.com") == "whitelist"
 
+    def test_with_reason_persisted(self, blacklist_manager, db):
+        """add_to_whitelist 传入 reason 后可在 address_list 中查到。"""
+        blacklist_manager.add_to_whitelist("vip@corp.com", reason="客户白名单")
+        rows = db.list_addresses(LIST_TYPE_WHITELIST)
+        assert any(r["address"] == "vip@corp.com" and r["reason"] == "客户白名单" for r in rows)
+
+    def test_without_reason_does_not_raise(self, blacklist_manager):
+        """省略 reason 参数时不抛出异常。"""
+        blacklist_manager.add_to_whitelist("noreason@corp.com")
+        assert blacklist_manager.check("noreason@corp.com") == "whitelist"
+
+    def test_reason_updated_on_upsert(self, blacklist_manager, db):
+        """重复添加时 reason 被更新为最新值。"""
+        blacklist_manager.add_to_whitelist("update@corp.com", reason="初始原因")
+        blacklist_manager.add_to_whitelist("update@corp.com", reason="更新原因")
+        rows = db.list_addresses(LIST_TYPE_WHITELIST)
+        match = next(r for r in rows if r["address"] == "update@corp.com")
+        assert match["reason"] == "更新原因"
+
 
 class TestRemove:
 

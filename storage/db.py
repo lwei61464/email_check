@@ -128,3 +128,100 @@ class Database:
         sql = "SELECT address, list_type, reason, created_at FROM address_list WHERE list_type = ?"
         with self._get_conn() as conn:
             return conn.execute(sql, (list_type,)).fetchall()
+
+    # ── Web 管理层专用查询 ────────────────────────────────────────────────────
+
+    def get_stats(self) -> dict:
+        """仪表盘聚合统计：总数、今日数、各分类计数、名单数量、最后处理时间。"""
+        with self._get_conn() as conn:
+            total = conn.execute("SELECT COUNT(*) FROM email_log").fetchone()[0]
+            today = conn.execute(
+                "SELECT COUNT(*) FROM email_log WHERE date(processed_at) = date('now')"
+            ).fetchone()[0]
+            last_at = conn.execute(
+                "SELECT processed_at FROM email_log ORDER BY processed_at DESC LIMIT 1"
+            ).fetchone()
+            cats = conn.execute(
+                "SELECT category, COUNT(*) FROM email_log GROUP BY category"
+            ).fetchall()
+            bl_count = conn.execute(
+                "SELECT COUNT(*) FROM address_list WHERE list_type = 'blacklist'"
+            ).fetchone()[0]
+            wl_count = conn.execute(
+                "SELECT COUNT(*) FROM address_list WHERE list_type = 'whitelist'"
+            ).fetchone()[0]
+
+        return {
+            "total_processed": total,
+            "today_count": today,
+            "last_processed_at": last_at[0] if last_at else None,
+            "category_counts": {row[0]: row[1] for row in cats},
+            "blacklist_count": bl_count,
+            "whitelist_count": wl_count,
+        }
+
+    def get_recent_logs(self, limit: int = 10) -> list:
+        """最近 N 条处理记录（最新优先）。"""
+        sql = """
+            SELECT uid, sender, subject, category, action_code, confidence, reason, processed_at
+            FROM email_log ORDER BY processed_at DESC LIMIT ?
+        """
+        with self._get_conn() as conn:
+            return conn.execute(sql, (limit,)).fetchall()
+
+    def get_category_trend(self, days: int = 7) -> list:
+        """近 N 天各分类每日数量（用于图表）。"""
+        sql = """
+            SELECT category, date(processed_at) AS date, COUNT(*) AS count
+            FROM email_log
+            WHERE processed_at >= date('now', ?)
+            GROUP BY category, date(processed_at)
+            ORDER BY date
+        """
+        with self._get_conn() as conn:
+            return conn.execute(sql, (f"-{days} days",)).fetchall()
+
+    def query_email_logs(
+        self,
+        category: str = None,
+        sender: str = None,
+        date_from: str = None,
+        date_to: str = None,
+        page: int = 1,
+        page_size: int = 20,
+    ) -> dict:
+        """分页查询邮件日志，支持分类/发件人/日期范围过滤。"""
+        conditions = []
+        params = []
+
+        if category:
+            conditions.append("category = ?")
+            params.append(category)
+        if sender:
+            conditions.append("sender LIKE ?")
+            params.append(f"%{sender.lower()}%")
+        if date_from:
+            conditions.append("date(processed_at) >= ?")
+            params.append(date_from)
+        if date_to:
+            conditions.append("date(processed_at) <= ?")
+            params.append(date_to)
+
+        where = ("WHERE " + " AND ".join(conditions)) if conditions else ""
+
+        with self._get_conn() as conn:
+            total = conn.execute(
+                f"SELECT COUNT(*) FROM email_log {where}", params
+            ).fetchone()[0]
+
+            offset = (page - 1) * page_size
+            items = conn.execute(
+                f"""SELECT uid, sender, subject, category, action_code,
+                           confidence, reason, processed_at
+                    FROM email_log {where}
+                    ORDER BY processed_at DESC
+                    LIMIT ? OFFSET ?""",
+                params + [page_size, offset],
+            ).fetchall()
+
+        return {"items": items, "total": total, "page": page, "page_size": page_size}

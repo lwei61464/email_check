@@ -33,9 +33,9 @@ class BlacklistManager:
         self.db.upsert_address(address, LIST_TYPE_BLACKLIST, reason)
         logger.info("加入黑名单: %s（原因: %s）", address, reason or "无")
 
-    def add_to_whitelist(self, address: str):
-        self.db.upsert_address(address, LIST_TYPE_WHITELIST)
-        logger.info("加入白名单: %s", address)
+    def add_to_whitelist(self, address: str, reason: str = ""):
+        self.db.upsert_address(address, LIST_TYPE_WHITELIST, reason)
+        logger.info("加入白名单: %s（原因: %s）", address, reason or "无")
 
     def remove(self, address: str, list_type: str):
         self.db.delete_address(address, list_type)

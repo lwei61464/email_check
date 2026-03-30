@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% block title %}仪表盘 — 邮件分拣系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题 -->
+<div class="mb-4">
+  <h1 class="section-title">仪表盘</h1>
+  <p class="section-subtitle">系统运行总览</p>
+</div>
+
+<!-- 统计卡片 -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(241,243,245,0.08);color:var(--text-secondary)">
+        <i class="bi bi-inbox-fill"></i>
+      </div>
+      <div class="stat-label">总处理量</div>
+      <div class="stat-number" id="stat-total">0</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(16,185,129,0.12);color:var(--success)">
+        <i class="bi bi-calendar-check-fill"></i>
+      </div>
+      <div class="stat-label">今日处理</div>
+      <div class="stat-number stat-number--green" id="stat-today">0</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:var(--danger)">
+        <i class="bi bi-shield-x-fill"></i>
+      </div>
+      <div class="stat-label">垃圾邮件</div>
+      <div class="stat-number stat-number--red" id="stat-spam">0</div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(245,158,11,0.12);color:var(--accent)">
+        <i class="bi bi-star-fill"></i>
+      </div>
+      <div class="stat-label">重要邮件</div>
+      <div class="stat-number stat-number--amber" id="stat-important">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- 图表 + 最近记录 -->
+<div class="row g-3 mb-3">
+  <!-- 分类分布环形图 -->
+  <div class="col-md-5">
+    <div class="panel-card">
+      <div class="panel-header">分类分布（近 7 天）</div>
+      <div class="panel-body text-center">
+        <div style="max-width:260px;margin:0 auto;position:relative">
+          <canvas id="category-chart"></canvas>
+        </div>
+        <div id="chart-empty" class="text-center py-3" style="display:none;color:var(--muted);font-size:0.85rem">暂无数据</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 最近处理记录 -->
+  <div class="col-md-7">
+    <div class="panel-card">
+      <div class="panel-header">最近处理记录</div>
+      <div id="recent-loading" class="text-center py-4" style="color:var(--muted);font-size:0.85rem">加载中…</div>
+      <table class="table table-sm mb-0" id="recent-table" style="display:none">
+        <thead>
+          <tr>
+            <th>发件人</th>
+            <th>分类</th>
+            <th style="width:70px">置信度</th>
+            <th style="width:100px">时间</th>
+          </tr>
+        </thead>
+        <tbody id="recent-tbody"></tbody>
+      </table>
+      <div id="recent-empty" class="text-center py-4" style="display:none;color:var(--muted);font-size:0.85rem">暂无记录</div>
+    </div>
+  </div>
+</div>
+
+<!-- 名单统计 -->
+<div class="row g-3">
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(239,68,68,0.10);color:var(--danger)">
+        <i class="bi bi-slash-circle-fill"></i>
+      </div>
+      <div class="stat-label">黑名单</div>
+      <div class="stat-number stat-number--red" id="stat-blacklist">0</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-card">
+      <div class="stat-icon" style="background:rgba(16,185,129,0.10);color:var(--success)">
+        <i class="bi bi-check-circle-fill"></i>
+      </div>
+      <div class="stat-label">白名单</div>
+      <div class="stat-number stat-number--green" id="stat-whitelist">0</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const CATEGORY_LABELS = {
+  spam: '垃圾邮件', transactional: '事务通知',
+  newsletter: '订阅资讯', normal: '普通邮件', important: '重要邮件'
+};
+const CATEGORY_COLORS = {
+  spam: '#ef4444', transactional: '#3b82f6',
+  newsletter: '#8b5cf6', normal: '#6b7280', important: '#f59e0b'
+};
+const BADGE_CLASS = {
+  spam: 'badge-spam', transactional: 'badge-transactional',
+  newsletter: 'badge-newsletter', normal: 'badge-normal', important: 'badge-important'
+};
+
+async function loadStats() {
+  try {
+    const res  = await fetch('/api/stats');
+    const json = await res.json();
+    const d    = json.data;
+    animateCounter(document.getElementById('stat-total'),     d.total_processed              ?? 0);
+    animateCounter(document.getElementById('stat-today'),     d.today_count                  ?? 0);
+    animateCounter(document.getElementById('stat-spam'),      d.category_counts?.spam        ?? 0);
+    animateCounter(document.getElementById('stat-important'), d.category_counts?.important   ?? 0);
+    animateCounter(document.getElementById('stat-blacklist'), d.blacklist_count              ?? 0);
+    animateCounter(document.getElementById('stat-whitelist'), d.whitelist_count              ?? 0);
+  } catch (_) {}
+}
+
+async function loadChart() {
+  try {
+    const res   = await fetch('/api/emails/trend');
+    const json  = await res.json();
+    const items = json.data || [];
+
+    const totals = {};
+    for (const row of items) {
+      totals[row.category] = (totals[row.category] || 0) + row.count;
+    }
+    const keys = Object.keys(totals);
+    if (keys.length === 0) {
+      document.getElementById('chart-empty').style.display = '';
+      return;
+    }
+
+    new Chart(document.getElementById('category-chart'), {
+      type: 'doughnut',
+      data: {
+        labels: keys.map(k => CATEGORY_LABELS[k] || k),
+        datasets: [{
+          data: keys.map(k => totals[k]),
+          backgroundColor: keys.map(k => CATEGORY_COLORS[k] || '#9ca3af'),
+          borderColor: 'transparent',
+          borderWidth: 0,
+          hoverOffset: 6,
+        }]
+      },
+      options: {
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 10, padding: 14, font: { size: 11 }, color: '#9ca3af' }
+          },
+          tooltip: {
+            backgroundColor: '#20242b',
+            borderColor: 'rgba(255,255,255,0.08)',
+            borderWidth: 1,
+            titleColor: '#f1f3f5',
+            bodyColor: '#9ca3af',
+            padding: 10,
+          }
+        }
+      }
+    });
+  } catch (_) {}
+}
+
+async function loadRecent() {
+  try {
+    const res   = await fetch('/api/emails/recent?limit=10');
+    const json  = await res.json();
+    const items = json.data || [];
+    document.getElementById('recent-loading').style.display = 'none';
+    if (items.length === 0) {
+      document.getElementById('recent-empty').style.display = '';
+      return;
+    }
+    document.getElementById('recent-table').style.display = '';
+    const tbody = document.getElementById('recent-tbody');
+    tbody.innerHTML = items.map((r, i) => {
+      const pct    = Math.round((r.confidence || 0) * 100);
+      const hiCls  = pct >= 80 ? 'confidence-fill--high' : '';
+      return `<tr class="anim-fade-in-up" style="animation-delay:${i * 28}ms">
+        <td class="text-truncate" style="max-width:160px;font-size:0.82rem" title="${r.sender}">${r.sender}</td>
+        <td><span class="${BADGE_CLASS[r.category] || 'badge-normal'}">${CATEGORY_LABELS[r.category] || r.category}</span></td>
+        <td>
+          <div class="d-flex align-items-center gap-1">
+            <div class="confidence-bar"><div class="confidence-fill ${hiCls}" style="width:${pct}%"></div></div>
+          </div>
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.76rem;color:var(--text-secondary)">${r.processed_at?.slice(5,16) || ''}</td>
+      </tr>`;
+    }).join('');
+  } catch (_) {}
+}
+
+loadStats();
+loadChart();
+loadRecent();
+</script>
+{% endblock %}

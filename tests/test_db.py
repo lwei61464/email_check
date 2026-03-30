@@ -235,3 +235,119 @@ class TestCountSenderSpam:
         db.insert_email_log("uid-s1", "a@evil.com", "S", "spam", "DELETE_AND_BLOCK", 0.95, "")
         db.insert_email_log("uid-s2", "b@evil.com", "S", "spam", "DELETE_AND_BLOCK", 0.95, "")
         assert db.count_sender_spam("a@evil.com") == 1
+
+
+# ── get_stats ─────────────────────────────────────────────────────────────────
+
+class TestGetStats:
+
+    def test_returns_zero_when_empty(self, db):
+        """空数据库时所有计数均为 0。"""
+        stats = db.get_stats()
+        assert stats["total_processed"] == 0
+        assert stats["today_count"] == 0
+        assert stats["last_processed_at"] is None
+        assert stats["category_counts"] == {}
+        assert stats["blacklist_count"] == 0
+        assert stats["whitelist_count"] == 0
+
+    def test_counts_total_correctly(self, db):
+        """total_processed 等于 email_log 中的记录数。"""
+        db.insert_email_log("u1", "a@x.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u2", "b@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        assert db.get_stats()["total_processed"] == 2
+
+    def test_category_counts_aggregated(self, db):
+        """category_counts 正确统计各分类数量。"""
+        db.insert_email_log("u1", "a@x.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u2", "b@x.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u3", "c@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        stats = db.get_stats()
+        assert stats["category_counts"]["spam"] == 2
+        assert stats["category_counts"]["normal"] == 1
+
+    def test_blacklist_whitelist_count(self, db):
+        """blacklist_count 和 whitelist_count 正确反映名单数量。"""
+        db.upsert_address("a@spam.com", "blacklist")
+        db.upsert_address("b@spam.com", "blacklist")
+        db.upsert_address("c@good.com", "whitelist")
+        stats = db.get_stats()
+        assert stats["blacklist_count"] == 2
+        assert stats["whitelist_count"] == 1
+
+
+# ── get_recent_logs ───────────────────────────────────────────────────────────
+
+class TestGetRecentLogs:
+
+    def test_returns_empty_when_no_records(self, db):
+        """无记录时返回空列表。"""
+        assert db.get_recent_logs() == []
+
+    def test_returns_latest_first(self, db):
+        """结果按 processed_at 倒序排列（最新在前）。"""
+        import sqlite3
+        # 直接写入不同时间戳以确保排序稳定
+        with sqlite3.connect(db.db_path) as conn:
+            conn.execute(
+                "INSERT INTO email_log (uid, sender, subject, category, action_code, confidence, reason, processed_at)"
+                " VALUES ('u1', 'a@x.com', 'S1', 'normal', 'MARK_READ_ARCHIVE', 0.8, '', '2025-01-01 10:00:00')"
+            )
+            conn.execute(
+                "INSERT INTO email_log (uid, sender, subject, category, action_code, confidence, reason, processed_at)"
+                " VALUES ('u2', 'b@x.com', 'S2', 'spam', 'DELETE_AND_BLOCK', 0.9, '', '2025-01-01 11:00:00')"
+            )
+            conn.commit()
+        rows = db.get_recent_logs(2)
+        # u2 时间更晚，应排在前面
+        assert dict(rows[0])["uid"] == "u2"
+
+    def test_limit_respected(self, db):
+        """limit 参数控制返回数量。"""
+        for i in range(5):
+            db.insert_email_log(f"u{i}", f"a{i}@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        assert len(db.get_recent_logs(3)) == 3
+
+
+# ── query_email_logs ──────────────────────────────────────────────────────────
+
+class TestQueryEmailLogs:
+
+    def test_returns_all_when_no_filters(self, db):
+        """无筛选条件时返回全部记录。"""
+        db.insert_email_log("u1", "a@x.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u2", "b@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        result = db.query_email_logs(page=1, page_size=20)
+        assert result["total"] == 2
+        assert len(result["items"]) == 2
+
+    def test_filter_by_category(self, db):
+        """category 筛选只返回对应分类记录。"""
+        db.insert_email_log("u1", "a@x.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u2", "b@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        result = db.query_email_logs(category="spam", page=1, page_size=20)
+        assert result["total"] == 1
+        assert dict(result["items"][0])["category"] == "spam"
+
+    def test_filter_by_sender(self, db):
+        """sender 筛选支持模糊匹配。"""
+        db.insert_email_log("u1", "target@evil.com", "S", "spam", "DELETE_AND_BLOCK", 0.9, "")
+        db.insert_email_log("u2", "other@good.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        result = db.query_email_logs(sender="evil", page=1, page_size=20)
+        assert result["total"] == 1
+
+    def test_pagination(self, db):
+        """分页正确：page_size=2 时第1页返回最新2条，第2页返回剩余。"""
+        for i in range(5):
+            db.insert_email_log(f"u{i}", f"a{i}@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        r1 = db.query_email_logs(page=1, page_size=2)
+        r2 = db.query_email_logs(page=2, page_size=2)
+        assert r1["total"] == 5
+        assert len(r1["items"]) == 2
+        assert len(r2["items"]) == 2
+
+    def test_returns_empty_when_no_match(self, db):
+        """筛选无匹配时返回空列表，total=0。"""
+        result = db.query_email_logs(category="spam", page=1, page_size=20)
+        assert result["total"] == 0
+        assert result["items"] == []

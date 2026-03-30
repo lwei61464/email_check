@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}黑白名单 — 邮件分拣系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题 -->
+<div class="mb-4">
+  <h1 class="section-title">黑白名单管理</h1>
+  <p class="section-subtitle">管理发件人拦截与放行规则</p>
+</div>
+
+<!-- Pill 标签切换 -->
+<div class="pill-tabs mb-4">
+  <button class="pill-tab active" id="tab-blacklist" onclick="switchTab('blacklist')">
+    <i class="bi bi-slash-circle-fill" style="color:var(--danger)"></i>黑名单
+  </button>
+  <button class="pill-tab" id="tab-whitelist" onclick="switchTab('whitelist')">
+    <i class="bi bi-check-circle-fill" style="color:var(--success)"></i>白名单
+  </button>
+</div>
+
+<!-- 添加表单 -->
+<div class="filter-bar mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-sm-4">
+      <label>地址 <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-size:0.72rem">（邮箱或 @domain.com）</span></label>
+      <input type="text" class="form-control form-control-sm" id="input-address" placeholder="user@example.com 或 @spam.com">
+    </div>
+    <div class="col-sm-5">
+      <label>备注原因（可选）</label>
+      <input type="text" class="form-control form-control-sm" id="input-reason" placeholder="说明添加原因">
+    </div>
+    <div class="col-sm-3">
+      <button class="btn-amber btn-sm w-100" onclick="addEntry()">
+        <i class="bi bi-plus-lg"></i> 添加到当前名单
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 名单列表 -->
+<div class="panel-card" style="border-radius:var(--radius-md)">
+  <div id="list-loading" class="text-center py-5" style="color:var(--muted);font-size:0.85rem">加载中…</div>
+  <div id="list-empty" class="text-center py-5" style="display:none;color:var(--muted);font-size:0.85rem">
+    <i class="bi bi-list-ul d-block mb-2" style="font-size:1.8rem;opacity:0.4"></i>该名单暂无条目
+  </div>
+  <table class="table mb-0" id="list-table" style="display:none">
+    <thead>
+      <tr>
+        <th>地址</th>
+        <th>原因</th>
+        <th style="width:140px">添加时间</th>
+        <th style="width:60px">操作</th>
+      </tr>
+    </thead>
+    <tbody id="list-tbody"></tbody>
+  </table>
+</div>
+
+<!-- 删除确认 Modal -->
+<div class="modal fade" id="confirm-modal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">确认删除</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"
+                style="filter:var(--close-filter,invert(0.6))"></button>
+      </div>
+      <div class="modal-body" style="padding:1.1rem 1.35rem">
+        <p style="font-size:0.875rem;color:var(--text-secondary);margin:0">
+          确定要从 <strong style="color:var(--text-primary)" id="confirm-list-type-label"></strong> 中移除
+          <code class="address-code" id="confirm-address"></code> 吗？
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost btn-sm" data-bs-dismiss="modal">取消</button>
+        <button id="confirm-delete-btn"
+                style="background:var(--danger);color:#fff;border:none;border-radius:var(--radius-sm);font-size:0.82rem;padding:0.35rem 0.85rem;cursor:pointer;font-weight:600">
+          删除
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentListType = 'blacklist';
+
+function switchTab(type) {
+  currentListType = type;
+  document.getElementById('tab-blacklist').classList.toggle('active', type === 'blacklist');
+  document.getElementById('tab-whitelist').classList.toggle('active', type === 'whitelist');
+  loadList();
+}
+
+async function loadList() {
+  document.getElementById('list-loading').style.display = '';
+  document.getElementById('list-table').style.display = 'none';
+  document.getElementById('list-empty').style.display = 'none';
+
+  try {
+    const res  = await fetch('/api/blacklist?list_type=' + currentListType);
+    const json = await res.json();
+    document.getElementById('list-loading').style.display = 'none';
+    const items = json.data || [];
+
+    if (items.length === 0) {
+      document.getElementById('list-empty').style.display = '';
+      return;
+    }
+    document.getElementById('list-table').style.display = '';
+    const tbody = document.getElementById('list-tbody');
+    tbody.innerHTML = items.map((r, i) => `
+      <tr class="anim-fade-in-up" style="animation-delay:${i * 22}ms">
+        <td><code class="address-code">${r.address}</code></td>
+        <td style="font-size:0.82rem;color:var(--text-secondary)">${r.reason || '—'}</td>
+        <td style="font-family:var(--font-mono);font-size:0.76rem;color:var(--text-secondary)">${r.created_at?.slice(0, 16) || ''}</td>
+        <td>
+          <button class="btn-danger-ghost" onclick="confirmDelete('${r.address}')">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </td>
+      </tr>`).join('');
+  } catch (e) {
+    document.getElementById('list-loading').style.display = 'none';
+    showToast('加载失败：' + e.message, 'error');
+  }
+}
+
+async function addEntry() {
+  const address = document.getElementById('input-address').value.trim();
+  const reason  = document.getElementById('input-reason').value.trim();
+  if (!address) { showToast('请输入地址', 'warning'); return; }
+
+  try {
+    const res  = await fetch('/api/blacklist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address, list_type: currentListType, reason })
+    });
+    const json = await res.json();
+    if (json.code === 0) {
+      document.getElementById('input-address').value = '';
+      document.getElementById('input-reason').value  = '';
+      showToast('添加成功', 'success');
+      loadList();
+    } else {
+      showToast(json.message || '添加失败', 'error');
+    }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+}
+
+let pendingDeleteAddress = null;
+
+function confirmDelete(address) {
+  pendingDeleteAddress = address;
+  document.getElementById('confirm-address').textContent          = address;
+  document.getElementById('confirm-list-type-label').textContent  = currentListType === 'blacklist' ? '黑名单' : '白名单';
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('confirm-modal')).show();
+}
+
+document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+  if (!pendingDeleteAddress) return;
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('confirm-modal')).hide();
+  try {
+    const res  = await fetch('/api/blacklist', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address: pendingDeleteAddress, list_type: currentListType })
+    });
+    const json = await res.json();
+    if (json.code === 0) { showToast('已删除', 'success'); loadList(); }
+    else { showToast(json.message || '删除失败', 'error'); }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+  pendingDeleteAddress = null;
+});
+
+loadList();
+</script>
+{% endblock %}
