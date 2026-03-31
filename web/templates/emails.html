@@ -43,7 +43,7 @@
 </div>
 
 <!-- 邮件列表 -->
-<div class="panel-card" style="border-radius:var(--radius-md)">
+<div class="panel-card">
   <div id="email-loading" class="text-center py-5" style="color:var(--muted);font-size:0.85rem">加载中…</div>
   <div id="email-empty" class="text-center py-5" style="display:none;color:var(--muted);font-size:0.85rem">
     <i class="bi bi-inbox d-block mb-2" style="font-size:1.8rem;opacity:0.4"></i>暂无邮件记录
@@ -132,9 +132,20 @@ async function loadEmails() {
       </tr>
       <tr class="detail-row" id="detail-${i}">
         <td colspan="5" class="detail-content">
-          <div class="d-flex gap-4 flex-wrap">
+          <div class="d-flex gap-4 flex-wrap align-items-center">
             <span><span class="detail-key">原因</span>${r.reason || '—'}</span>
             <span><span class="detail-key">动作</span><span style="font-family:var(--font-mono);font-size:0.8rem">${r.action_code || '—'}</span></span>
+            <span class="d-flex align-items-center gap-2 ms-auto">
+              <span class="detail-key" style="margin-right:0">纠错</span>
+              <select class="form-select form-select-sm" id="correct-sel-${i}" style="width:auto;font-size:0.78rem;padding:0.2rem 1.6rem 0.2rem 0.5rem">
+                <option value="spam">垃圾邮件</option>
+                <option value="transactional">事务通知</option>
+                <option value="newsletter">订阅资讯</option>
+                <option value="normal">普通邮件</option>
+                <option value="important">重要邮件</option>
+              </select>
+              <button class="btn-amber btn-sm" onclick="submitCorrection('${r.uid}', ${i})">提交</button>
+            </span>
           </div>
         </td>
       </tr>`;
@@ -168,6 +179,28 @@ function renderPagination(totalPages) {
 }
 
 function goPage(p) { currentPage = p; loadEmails(); return false; }
+
+async function submitCorrection(uid, idx) {
+  const sel = document.getElementById('correct-sel-' + idx);
+  if (!sel) return;
+  const correct_category = sel.value;
+  try {
+    const res  = await fetch(`/api/emails/${encodeURIComponent(uid)}/correct`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correct_category })
+    });
+    const json = await res.json();
+    if (json.code === 0) {
+      showToast('纠错已提交', 'success');
+      loadEmails();
+    } else {
+      showToast(json.message || '提交失败', 'error');
+    }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+}
 
 document.getElementById('filter-sender').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 

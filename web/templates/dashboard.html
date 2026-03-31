@@ -20,12 +20,12 @@
     </div>
   </div>
   <div class="col-6 col-xl-3">
-    <div class="stat-card">
-      <div class="stat-icon" style="background:rgba(16,185,129,0.12);color:var(--success)">
+    <div class="stat-card accent-card">
+      <div class="stat-icon" style="background:var(--color-accent-subtle);color:var(--color-accent)">
         <i class="bi bi-calendar-check-fill"></i>
       </div>
       <div class="stat-label">今日处理</div>
-      <div class="stat-number stat-number--green" id="stat-today">0</div>
+      <div class="stat-number" id="stat-today">0</div>
     </div>
   </div>
   <div class="col-6 col-xl-3">
@@ -84,8 +84,8 @@
   </div>
 </div>
 
-<!-- 名单统计 -->
-<div class="row g-3">
+<!-- 名单统计 + 处理耗时 -->
+<div class="row g-3 mb-3">
   <div class="col-6 col-md-3">
     <div class="stat-card">
       <div class="stat-icon" style="background:rgba(239,68,68,0.10);color:var(--danger)">
@@ -102,6 +102,42 @@
       </div>
       <div class="stat-label">白名单</div>
       <div class="stat-number stat-number--green" id="stat-whitelist">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- 处理性能趋势 + 历史扫描 -->
+<div class="row g-3">
+  <div class="col-md-9">
+    <div class="panel-card">
+      <div class="panel-header">处理性能趋势（近 7 天）</div>
+      <div class="panel-body">
+        <div id="metrics-empty" class="text-center py-4" style="display:none;color:var(--muted);font-size:0.85rem">
+          <i class="bi bi-bar-chart d-block mb-2" style="font-size:1.8rem;opacity:0.4"></i>暂无性能数据
+        </div>
+        <canvas id="metrics-chart" height="80" style="display:none"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel-card" style="height:100%">
+      <div class="panel-header">历史邮件扫描</div>
+      <div class="panel-body">
+        <div class="mb-2">
+          <label style="font-size:0.78rem;color:var(--text-secondary)">向前扫描天数</label>
+          <input type="number" class="form-control form-control-sm mt-1" id="scan-days" value="30" min="1" max="365">
+        </div>
+        <div class="mb-3 d-flex align-items-center gap-2">
+          <input class="form-check-input" type="checkbox" id="scan-dry-run" checked>
+          <label class="form-check-label" for="scan-dry-run" style="font-size:0.78rem;color:var(--text-secondary)">
+            试运行（仅统计，不处理）
+          </label>
+        </div>
+        <button class="btn-amber btn-sm w-100" id="scan-btn" onclick="startScan()">
+          <i class="bi bi-search"></i> 开始扫描
+        </button>
+        <div id="scan-status" class="mt-2" style="font-size:0.76rem;color:var(--text-secondary);min-height:1.5rem"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -214,8 +250,115 @@ async function loadRecent() {
   } catch (_) {}
 }
 
+async function loadMetrics() {
+  try {
+    const res   = await fetch('/api/metrics?days=7');
+    const json  = await res.json();
+    const items = json.data || [];
+    if (items.length === 0) {
+      document.getElementById('metrics-empty').style.display = '';
+      return;
+    }
+    const canvas = document.getElementById('metrics-chart');
+    canvas.style.display = '';
+    const labels = items.map(r => r.recorded_at?.slice(5, 16) || '');
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: '流水线耗时(s)',
+            data: items.map(r => r.pipeline_time),
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.08)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3,
+          },
+          {
+            label: '处理邮件数',
+            data: items.map(r => r.email_count),
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.08)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 3,
+            yAxisID: 'y2',
+          },
+        ]
+      },
+      options: {
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { boxWidth: 10, padding: 12, font: { size: 11 }, color: '#9ca3af' } },
+          tooltip: {
+            backgroundColor: '#20242b',
+            borderColor: 'rgba(255,255,255,0.08)',
+            borderWidth: 1,
+            titleColor: '#f1f3f5',
+            bodyColor: '#9ca3af',
+            padding: 10,
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { ticks: { color: '#6b7280', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y2: { position: 'right', ticks: { color: '#6b7280', font: { size: 10 } }, grid: { drawOnChartArea: false } },
+        }
+      }
+    });
+  } catch (_) {}
+}
+
+let _scanPollTimer = null;
+
+async function startScan() {
+  const days_back = parseInt(document.getElementById('scan-days').value) || 30;
+  const dry_run   = document.getElementById('scan-dry-run').checked;
+  document.getElementById('scan-btn').disabled = true;
+  document.getElementById('scan-status').textContent = '提交中…';
+
+  try {
+    const res  = await fetch('/api/scan/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ days_back, dry_run })
+    });
+    const json = await res.json();
+    if (json.code !== 0) { showToast(json.message || '启动失败', 'error'); return; }
+    const taskId = json.data.task_id;
+    showToast(`扫描任务 #${taskId} 已启动`, 'success');
+    _pollScan(taskId);
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+    document.getElementById('scan-btn').disabled = false;
+  }
+}
+
+async function _pollScan(taskId) {
+  clearTimeout(_scanPollTimer);
+  try {
+    const res  = await fetch(`/api/scan/history/${taskId}`);
+    const json = await res.json();
+    const t    = json.data;
+    const msg  = t.status === 'completed'
+      ? `完成：共 ${t.total} 封，处理 ${t.processed} 封`
+      : t.status === 'failed'
+        ? `失败：${t.error_msg || '未知错误'}`
+        : `运行中：${t.processed}/${t.total}`;
+    document.getElementById('scan-status').textContent = msg;
+    if (t.status === 'running' || t.status === 'pending') {
+      _scanPollTimer = setTimeout(() => _pollScan(taskId), 2000);
+    } else {
+      document.getElementById('scan-btn').disabled = false;
+    }
+  } catch { document.getElementById('scan-btn').disabled = false; }
+}
+
 loadStats();
 loadChart();
 loadRecent();
+loadMetrics();
 </script>
 {% endblock %}
