@@ -79,6 +79,34 @@ class TestEmailLog:
         assert db.is_uid_processed("uid-B") is True
 
 
+# ── get_email_by_uid ──────────────────────────────────────────────────────────
+
+class TestGetEmailByUid:
+
+    def test_returns_row_for_existing_uid(self, db):
+        """插入后按 UID 可查到完整记录。"""
+        db.insert_email_log("get-uid-1", "sender@x.com", "Hello", "normal",
+                            "MARK_READ_ARCHIVE", 0.9, "ok")
+        row = db.get_email_by_uid("get-uid-1")
+        assert row is not None
+        assert row["sender"] == "sender@x.com"
+        assert row["subject"] == "Hello"
+        assert row["category"] == "normal"
+
+    def test_returns_none_for_missing_uid(self, db):
+        """不存在的 UID 返回 None。"""
+        assert db.get_email_by_uid("does-not-exist") is None
+
+    def test_fields_match_inserted_values(self, db):
+        """返回行的 action_code、confidence、reason 与插入值一致。"""
+        db.insert_email_log("get-uid-2", "a@b.com", "Sub", "spam",
+                            "DELETE_AND_BLOCK", 0.97, "spam detected")
+        row = db.get_email_by_uid("get-uid-2")
+        assert row["action_code"] == "DELETE_AND_BLOCK"
+        assert abs(row["confidence"] - 0.97) < 0.001
+        assert row["reason"] == "spam detected"
+
+
 # ── upsert_address ────────────────────────────────────────────────────────────
 
 class TestUpsertAddress:
@@ -351,3 +379,47 @@ class TestQueryEmailLogs:
         result = db.query_email_logs(category="spam", page=1, page_size=20)
         assert result["total"] == 0
         assert result["items"] == []
+
+
+# ── correction_log ────────────────────────────────────────────────────────────
+
+class TestCorrectionLog:
+
+    def test_insert_and_retrieve_correction(self, db):
+        """insert_correction 后 get_recent_corrections 能取回该记录。"""
+        db.insert_correction("uid-1", "a@x.com", "Subject", "normal", "important")
+        rows = db.get_recent_corrections(limit=10)
+        assert len(rows) == 1
+        assert rows[0]["email_uid"] == "uid-1"
+        assert rows[0]["original_cat"] == "normal"
+        assert rows[0]["correct_cat"] == "important"
+
+    def test_returns_empty_when_no_corrections(self, db):
+        """无纠错记录时返回空列表。"""
+        assert db.get_recent_corrections() == []
+
+    def test_limit_respected(self, db):
+        """limit 参数控制返回数量。"""
+        for i in range(5):
+            db.insert_correction(f"uid-{i}", "a@x.com", "S", "normal", "spam")
+        rows = db.get_recent_corrections(limit=3)
+        assert len(rows) == 3
+
+    def test_returns_latest_first(self, db):
+        """最新纠错记录排在前面。"""
+        db.insert_correction("uid-a", "a@x.com", "S", "normal", "spam")
+        db.insert_correction("uid-b", "b@x.com", "S", "spam", "important")
+        rows = db.get_recent_corrections(limit=10)
+        assert rows[0]["email_uid"] == "uid-b"
+
+    def test_update_email_category_changes_category(self, db):
+        """update_email_category 正确更新 email_log 中的分类和 action_code。"""
+        db.insert_email_log("uid-x", "a@x.com", "S", "normal", "MARK_READ_ARCHIVE", 0.8, "")
+        db.update_email_category("uid-x", "important", "STAR_AND_NOTIFY")
+        result = db.query_email_logs(category="important")
+        assert result["total"] == 1
+        assert dict(result["items"][0])["action_code"] == "STAR_AND_NOTIFY"
+
+    def test_update_nonexistent_uid_does_not_raise(self, db):
+        """更新不存在的 uid 不抛出异常（静默忽略）。"""
+        db.update_email_category("nonexistent-uid", "spam", "DELETE_AND_BLOCK")

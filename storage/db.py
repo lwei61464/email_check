@@ -37,6 +37,85 @@ CREATE TABLE IF NOT EXISTS address_list (
 )
 """
 
+DDL_CUSTOM_RULES = """
+CREATE TABLE IF NOT EXISTS custom_rules (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT NOT NULL,
+    field      TEXT NOT NULL,
+    operator   TEXT NOT NULL,
+    value      TEXT NOT NULL,
+    action_cat TEXT NOT NULL,
+    priority   INTEGER DEFAULT 0,
+    enabled    INTEGER DEFAULT 1,
+    created_at TEXT DEFAULT (datetime('now','localtime'))
+)
+"""
+
+DDL_CORRECTION_LOG = """
+CREATE TABLE IF NOT EXISTS correction_log (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    email_uid    TEXT NOT NULL,
+    sender       TEXT,
+    subject      TEXT,
+    original_cat TEXT NOT NULL,
+    correct_cat  TEXT NOT NULL,
+    corrected_at TEXT DEFAULT (datetime('now','localtime'))
+)
+"""
+
+DDL_SCHEMA_VERSION = """
+CREATE TABLE IF NOT EXISTS schema_version (
+    version INTEGER NOT NULL
+)
+"""
+
+DDL_SCAN_TASK = """
+CREATE TABLE IF NOT EXISTS scan_task (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    status      TEXT NOT NULL DEFAULT 'pending',
+    days_back   INTEGER NOT NULL,
+    dry_run     INTEGER NOT NULL DEFAULT 0,
+    total       INTEGER DEFAULT 0,
+    processed   INTEGER DEFAULT 0,
+    error_msg   TEXT,
+    started_at  TEXT DEFAULT (datetime('now','localtime')),
+    finished_at TEXT
+)
+"""
+
+DDL_PROCESS_METRICS = """
+CREATE TABLE IF NOT EXISTS process_metrics (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    pipeline_time REAL,
+    llm_time      REAL,
+    llm_success   INTEGER,
+    email_count   INTEGER,
+    error_count   INTEGER,
+    recorded_at   TEXT DEFAULT (datetime('now','localtime'))
+)
+"""
+
+# 当前 schema 版本（每次结构性变更递增）
+_SCHEMA_VERSION = 1
+
+# 迁移脚本：key 为目标版本号，value 为升级 SQL 列表
+_MIGRATIONS: dict = {
+    # 版本 1 通过 initialize() 中的 DDL_* 建表完成，无需额外迁移 SQL
+}
+
+
+def _get_schema_version(conn) -> int:
+    try:
+        row = conn.execute("SELECT version FROM schema_version LIMIT 1").fetchone()
+        return row[0] if row else 0
+    except sqlite3.OperationalError:
+        return 0
+
+
+def _set_schema_version(conn, version: int):
+    conn.execute("DELETE FROM schema_version")
+    conn.execute("INSERT INTO schema_version (version) VALUES (?)", (version,))
+
 
 class Database:
     def __init__(self, db_path: str):
@@ -57,10 +136,27 @@ class Database:
             conn.close()
 
     def initialize(self):
-        """初始化数据库，创建所有必要的表（幂等）。"""
+        """初始化数据库，创建所有必要的表并执行 schema 迁移（幂等）。"""
         with self._get_conn() as conn:
+            # WAL 模式：提升并发读写性能，减少锁争用
+            conn.execute("PRAGMA journal_mode=WAL")
             conn.execute(DDL_EMAIL_LOG)
             conn.execute(DDL_ADDRESS_LIST)
+            conn.execute(DDL_CORRECTION_LOG)
+            conn.execute(DDL_CUSTOM_RULES)
+            conn.execute(DDL_SCHEMA_VERSION)
+            conn.execute(DDL_PROCESS_METRICS)
+            conn.execute(DDL_SCAN_TASK)
+
+            current = _get_schema_version(conn)
+            if current < _SCHEMA_VERSION:
+                for ver in range(current + 1, _SCHEMA_VERSION + 1):
+                    for sql in _MIGRATIONS.get(ver, []):
+                        conn.execute(sql)
+                        logger.info("数据库迁移：执行版本 %d SQL", ver)
+                _set_schema_version(conn, _SCHEMA_VERSION)
+                logger.info("数据库 schema 已更新至版本 %d", _SCHEMA_VERSION)
+
         logger.info("数据库初始化完成：%s", self.db_path)
 
     # ── 处理日志 ──────────────────────────────────────────
@@ -75,6 +171,15 @@ class Database:
         """
         with self._get_conn() as conn:
             conn.execute(sql, (uid, sender, subject, category, action_code, confidence, reason))
+
+    def get_email_by_uid(self, uid: str) -> Optional[sqlite3.Row]:
+        """按 UID 查询单封邮件记录，不存在时返回 None。"""
+        sql = """
+            SELECT uid, sender, subject, category, action_code, confidence, reason, processed_at
+            FROM email_log WHERE uid = ?
+        """
+        with self._get_conn() as conn:
+            return conn.execute(sql, (uid,)).fetchone()
 
     def is_uid_processed(self, uid: str) -> bool:
         sql = "SELECT EXISTS(SELECT 1 FROM email_log WHERE uid = ?)"
@@ -134,30 +239,37 @@ class Database:
     def get_stats(self) -> dict:
         """仪表盘聚合统计：总数、今日数、各分类计数、名单数量、最后处理时间。"""
         with self._get_conn() as conn:
-            total = conn.execute("SELECT COUNT(*) FROM email_log").fetchone()[0]
-            today = conn.execute(
-                "SELECT COUNT(*) FROM email_log WHERE date(processed_at) = date('now')"
-            ).fetchone()[0]
-            last_at = conn.execute(
-                "SELECT processed_at FROM email_log ORDER BY processed_at DESC LIMIT 1"
-            ).fetchone()
+            # 合并总数 + 今日数 + 最后时间为一次查询
+            row = conn.execute("""
+                SELECT
+                    COUNT(*) AS total,
+                    SUM(CASE WHEN date(processed_at) = date('now') THEN 1 ELSE 0 END) AS today,
+                    MAX(processed_at) AS last_at
+                FROM email_log
+            """).fetchone()
+            total   = row[0] or 0
+            today   = row[1] or 0
+            last_at = row[2]
+
             cats = conn.execute(
                 "SELECT category, COUNT(*) FROM email_log GROUP BY category"
             ).fetchall()
-            bl_count = conn.execute(
-                "SELECT COUNT(*) FROM address_list WHERE list_type = 'blacklist'"
-            ).fetchone()[0]
-            wl_count = conn.execute(
-                "SELECT COUNT(*) FROM address_list WHERE list_type = 'whitelist'"
-            ).fetchone()[0]
+
+            # 合并黑白名单计数为一次查询
+            list_counts = {
+                r[0]: r[1]
+                for r in conn.execute(
+                    "SELECT list_type, COUNT(*) FROM address_list GROUP BY list_type"
+                ).fetchall()
+            }
 
         return {
             "total_processed": total,
             "today_count": today,
-            "last_processed_at": last_at[0] if last_at else None,
+            "last_processed_at": last_at,
             "category_counts": {row[0]: row[1] for row in cats},
-            "blacklist_count": bl_count,
-            "whitelist_count": wl_count,
+            "blacklist_count": list_counts.get("blacklist", 0),
+            "whitelist_count": list_counts.get("whitelist", 0),
         }
 
     def get_recent_logs(self, limit: int = 10) -> list:
@@ -225,3 +337,124 @@ class Database:
             ).fetchall()
 
         return {"items": items, "total": total, "page": page, "page_size": page_size}
+
+    # ── 自定义规则 ────────────────────────────────────────────────────────────
+
+    def get_active_rules(self) -> list:
+        """获取所有启用的规则，按优先级降序。"""
+        sql = """
+            SELECT id, name, field, operator, value, action_cat, priority, enabled, created_at
+            FROM custom_rules WHERE enabled = 1 ORDER BY priority DESC, id ASC
+        """
+        with self._get_conn() as conn:
+            return [dict(r) for r in conn.execute(sql).fetchall()]
+
+    def get_all_rules(self) -> list:
+        """获取所有规则（含禁用），供管理页面展示。"""
+        sql = """
+            SELECT id, name, field, operator, value, action_cat, priority, enabled, created_at
+            FROM custom_rules ORDER BY priority DESC, id ASC
+        """
+        with self._get_conn() as conn:
+            return [dict(r) for r in conn.execute(sql).fetchall()]
+
+    def insert_rule(self, name: str, field: str, operator: str, value: str,
+                    action_cat: str, priority: int = 0) -> int:
+        sql = """
+            INSERT INTO custom_rules (name, field, operator, value, action_cat, priority)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute(sql, (name, field, operator, value, action_cat, priority))
+            return cur.lastrowid
+
+    def update_rule(self, rule_id: int, name: str, field: str, operator: str,
+                    value: str, action_cat: str, priority: int, enabled: int):
+        sql = """
+            UPDATE custom_rules
+            SET name=?, field=?, operator=?, value=?, action_cat=?, priority=?, enabled=?
+            WHERE id=?
+        """
+        with self._get_conn() as conn:
+            conn.execute(sql, (name, field, operator, value, action_cat, priority, enabled, rule_id))
+
+    def delete_rule(self, rule_id: int):
+        with self._get_conn() as conn:
+            conn.execute("DELETE FROM custom_rules WHERE id = ?", (rule_id,))
+
+    # ── 纠错记录 ──────────────────────────────────────────────────────────────
+
+    def insert_correction(self, email_uid: str, sender: str, subject: str,
+                          original_cat: str, correct_cat: str):
+        sql = """
+            INSERT INTO correction_log (email_uid, sender, subject, original_cat, correct_cat)
+            VALUES (?, ?, ?, ?, ?)
+        """
+        with self._get_conn() as conn:
+            conn.execute(sql, (email_uid, sender, subject, original_cat, correct_cat))
+
+    def get_recent_corrections(self, limit: int = 10) -> list:
+        """拉取最近纠错记录，供 classifier Few-shot 注入使用。"""
+        sql = """
+            SELECT email_uid, sender, subject, original_cat, correct_cat, corrected_at
+            FROM correction_log
+            ORDER BY corrected_at DESC, id DESC
+            LIMIT ?
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute(sql, (limit,)).fetchall()
+            return [dict(r) for r in rows]
+
+    def update_email_category(self, uid: str, category: str, action_code: str):
+        """更新 email_log 中某封邮件的分类（用户纠错后同步）。"""
+        sql = "UPDATE email_log SET category = ?, action_code = ? WHERE uid = ?"
+        with self._get_conn() as conn:
+            conn.execute(sql, (category, action_code, uid))
+
+    # ── 处理指标 ──────────────────────────────────────────────────────────────
+
+    def insert_metrics(self, pipeline_time: float, llm_time: float,
+                       llm_success: int, email_count: int, error_count: int):
+        sql = """
+            INSERT INTO process_metrics
+                (pipeline_time, llm_time, llm_success, email_count, error_count)
+            VALUES (?, ?, ?, ?, ?)
+        """
+        with self._get_conn() as conn:
+            conn.execute(sql, (pipeline_time, llm_time, llm_success, email_count, error_count))
+
+    # ── 历史扫描任务 ──────────────────────────────────────────────────────────
+
+    def create_scan_task(self, days_back: int, dry_run: bool) -> int:
+        sql = "INSERT INTO scan_task (days_back, dry_run) VALUES (?, ?)"
+        with self._get_conn() as conn:
+            cur = conn.execute(sql, (days_back, 1 if dry_run else 0))
+            return cur.lastrowid
+
+    def update_scan_task(self, task_id: int, status: str, total: int = 0,
+                         processed: int = 0, error_msg: str = None, finished: bool = False):
+        sql = """
+            UPDATE scan_task
+            SET status=?, total=?, processed=?, error_msg=?,
+                finished_at = CASE WHEN ? THEN datetime('now','localtime') ELSE finished_at END
+            WHERE id=?
+        """
+        with self._get_conn() as conn:
+            conn.execute(sql, (status, total, processed, error_msg, 1 if finished else 0, task_id))
+
+    def get_scan_task(self, task_id: int) -> dict:
+        sql = "SELECT * FROM scan_task WHERE id = ?"
+        with self._get_conn() as conn:
+            row = conn.execute(sql, (task_id,)).fetchone()
+            return dict(row) if row else {}
+
+    def get_metrics_trend(self, days: int = 7) -> list:
+        """近 N 天的指标记录（最新在后）。"""
+        sql = """
+            SELECT pipeline_time, llm_time, llm_success, email_count, error_count, recorded_at
+            FROM process_metrics
+            WHERE recorded_at >= datetime('now', ?)
+            ORDER BY recorded_at ASC
+        """
+        with self._get_conn() as conn:
+            return [dict(r) for r in conn.execute(sql, (f"-{days} days",)).fetchall()]

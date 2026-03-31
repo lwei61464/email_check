@@ -36,6 +36,9 @@ class _FakeSettings:
     notify_channel = "log"
     notify_webhook_url = ""
     important_senders = []
+    llm_circuit_breaker_threshold = 5
+    llm_circuit_breaker_reset = 300
+    llm_max_retries = 3
 
 
 @pytest.fixture
@@ -139,6 +142,20 @@ class TestProcessOneNormalFlow:
                 scheduler._process_one(88, fetcher, handler)
 
         mock_notify.assert_called_once()
+
+    def test_classify_called_with_db(self, scheduler, db):
+        """_process_one 调用 classify 时传入 db 实例，确保 Few-shot 纠错生效。"""
+        raw = b"From: check@example.com\r\nSubject: DB arg\r\nContent-Type: text/plain\r\n\r\nCheck"
+        fetcher = _make_fetcher(raw)
+        handler = _make_handler()
+        clf_result = ClassificationResult("normal", "MARK_READ_ARCHIVE", "ok", 0.8)
+
+        with patch.object(scheduler._classifier, "classify", return_value=clf_result) as mock_clf:
+            scheduler._process_one(45, fetcher, handler)
+
+        mock_clf.assert_called_once()
+        _, kwargs = mock_clf.call_args
+        assert kwargs.get("db") is db or mock_clf.call_args[0][1] is db
 
     def test_non_important_email_does_not_trigger_notifier(self, scheduler, db):
         """非 important 分类不调用 notifier。"""

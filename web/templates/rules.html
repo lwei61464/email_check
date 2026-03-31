@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}自定义规则 — 邮件分拣系统{% endblock %}
+
+{% block content %}
+<!-- 页面标题 -->
+<div class="mb-4">
+  <h1 class="section-title">自定义规则</h1>
+  <p class="section-subtitle">规则在黑白名单之后、AI 分类之前执行，命中即停止</p>
+</div>
+
+<!-- 添加表单 -->
+<div class="filter-bar mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-sm-3">
+      <label>规则名称</label>
+      <input type="text" class="form-control form-control-sm" id="input-name" placeholder="例：GitHub 通知" maxlength="100">
+    </div>
+    <div class="col-sm-2">
+      <label>匹配字段</label>
+      <select class="form-select form-select-sm" id="input-field">
+        <option value="sender">发件人</option>
+        <option value="subject">主题</option>
+        <option value="body">正文</option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label>匹配方式</label>
+      <select class="form-select form-select-sm" id="input-operator">
+        <option value="contains">包含</option>
+        <option value="equals">精确匹配</option>
+        <option value="starts_with">开头为</option>
+        <option value="regex">正则表达式</option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label>匹配值</label>
+      <input type="text" class="form-control form-control-sm" id="input-value" placeholder="@github.com">
+    </div>
+    <div class="col-sm-1">
+      <label>分类</label>
+      <select class="form-select form-select-sm" id="input-action-cat">
+        <option value="important">重要</option>
+        <option value="normal">普通</option>
+        <option value="spam">垃圾</option>
+        <option value="newsletter">订阅</option>
+        <option value="transactional">事务</option>
+      </select>
+    </div>
+    <div class="col-sm-1">
+      <label>优先级</label>
+      <input type="number" class="form-control form-control-sm" id="input-priority" value="0" min="0">
+    </div>
+    <div class="col-sm-1">
+      <button class="btn-amber btn-sm w-100" onclick="addRule()">
+        <i class="bi bi-plus-lg"></i> 添加
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 规则列表 -->
+<div class="panel-card">
+  <div id="rules-loading" class="text-center py-5" style="color:var(--muted);font-size:0.85rem">加载中…</div>
+  <div id="rules-empty" class="text-center py-5" style="display:none;color:var(--muted);font-size:0.85rem">
+    <i class="bi bi-funnel d-block mb-2" style="font-size:1.8rem;opacity:0.4"></i>暂无自定义规则
+  </div>
+  <table class="table mb-0" id="rules-table" style="display:none">
+    <thead>
+      <tr>
+        <th>规则名称</th>
+        <th style="width:80px">字段</th>
+        <th style="width:100px">方式</th>
+        <th>匹配值</th>
+        <th style="width:80px">分类</th>
+        <th style="width:60px">优先级</th>
+        <th style="width:70px">状态</th>
+        <th style="width:80px">操作</th>
+      </tr>
+    </thead>
+    <tbody id="rules-tbody"></tbody>
+  </table>
+</div>
+
+<!-- 删除确认 Modal -->
+<div class="modal fade" id="confirm-modal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">确认删除</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"
+                style="filter:var(--close-filter,invert(0.6))"></button>
+      </div>
+      <div class="modal-body" style="padding:1.1rem 1.35rem">
+        <p style="font-size:0.875rem;color:var(--text-secondary);margin:0">
+          确定要删除规则 <strong style="color:var(--text-primary)" id="confirm-rule-name"></strong> 吗？
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost btn-sm" data-bs-dismiss="modal">取消</button>
+        <button id="confirm-delete-btn"
+                style="background:var(--danger);color:#fff;border:none;border-radius:var(--radius-sm);font-size:0.82rem;padding:0.35rem 0.85rem;cursor:pointer;font-weight:600">
+          删除
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const FIELD_LABELS    = { sender: '发件人', subject: '主题', body: '正文' };
+const OPERATOR_LABELS = { contains: '包含', equals: '精确', starts_with: '开头', regex: '正则' };
+const CAT_LABELS      = { spam: '垃圾', transactional: '事务', newsletter: '订阅', normal: '普通', important: '重要' };
+const CAT_BADGE       = { spam: 'badge-spam', transactional: 'badge-transactional', newsletter: 'badge-newsletter', normal: 'badge-normal', important: 'badge-important' };
+
+async function loadRules() {
+  document.getElementById('rules-loading').style.display = '';
+  document.getElementById('rules-table').style.display = 'none';
+  document.getElementById('rules-empty').style.display = 'none';
+
+  try {
+    const res  = await fetch('/api/rules');
+    const json = await res.json();
+    document.getElementById('rules-loading').style.display = 'none';
+    const items = json.data || [];
+
+    if (items.length === 0) {
+      document.getElementById('rules-empty').style.display = '';
+      return;
+    }
+    document.getElementById('rules-table').style.display = '';
+    const tbody = document.getElementById('rules-tbody');
+    tbody.innerHTML = items.map((r, i) => {
+      const name     = document.createElement('div'); name.textContent = r.name;
+      const val      = document.createElement('div'); val.textContent  = r.value;
+      return `
+      <tr class="anim-fade-in-up" style="animation-delay:${i * 22}ms"
+          data-id="${r.id}" data-enabled="${r.enabled}" data-rule='${JSON.stringify(r).replace(/'/g,"&#39;")}'>
+        <td style="font-size:0.83rem">${name.innerHTML}</td>
+        <td style="font-size:0.78rem;color:var(--text-secondary)">${FIELD_LABELS[r.field] || r.field}</td>
+        <td style="font-size:0.78rem;color:var(--text-secondary)">${OPERATOR_LABELS[r.operator] || r.operator}</td>
+        <td><code class="address-code" style="font-size:0.78rem">${val.innerHTML}</code></td>
+        <td><span class="${CAT_BADGE[r.action_cat] || 'badge-normal'}">${CAT_LABELS[r.action_cat] || r.action_cat}</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;text-align:center">${r.priority}</td>
+        <td>
+          <button class="btn-sm ${r.enabled ? 'btn-amber' : 'btn-ghost'} btn-toggle-rule">
+            ${r.enabled ? '启用' : '禁用'}
+          </button>
+        </td>
+        <td>
+          <button class="btn-danger-ghost btn-delete-rule">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    document.getElementById('rules-loading').style.display = 'none';
+    showToast('加载失败：' + e.message, 'error');
+  }
+}
+
+// 事件委托：统一处理表格行内的启用/删除按钮，避免内联 onclick 带来的 XSS 风险
+document.getElementById('rules-tbody').addEventListener('click', function (e) {
+  const row = e.target.closest('tr[data-id]');
+  if (!row) return;
+  const id      = parseInt(row.dataset.id, 10);
+  const enabled = parseInt(row.dataset.enabled, 10);
+  if (e.target.closest('.btn-toggle-rule')) {
+    let r;
+    try { r = JSON.parse(row.dataset.rule); } catch { return; }
+    toggleEnabled(id, enabled, r);
+  } else if (e.target.closest('.btn-delete-rule')) {
+    const nameEl = row.querySelector('td:first-child');
+    confirmDelete(id, nameEl ? nameEl.textContent.trim() : '');
+  }
+});
+
+async function addRule() {
+  const name      = document.getElementById('input-name').value.trim();
+  const field     = document.getElementById('input-field').value;
+  const operator  = document.getElementById('input-operator').value;
+  const value     = document.getElementById('input-value').value.trim();
+  const action_cat = document.getElementById('input-action-cat').value;
+  const priority  = parseInt(document.getElementById('input-priority').value) || 0;
+
+  if (!name || !value) { showToast('请填写规则名称和匹配值', 'warning'); return; }
+
+  try {
+    const res  = await fetch('/api/rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, field, operator, value, action_cat, priority })
+    });
+    const json = await res.json();
+    if (json.code === 0) {
+      ['input-name','input-value'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('input-priority').value = '0';
+      showToast('规则已添加', 'success');
+      loadRules();
+    } else {
+      showToast(json.message || '添加失败', 'error');
+    }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+}
+
+async function toggleEnabled(id, currentEnabled, r) {
+  const newEnabled = currentEnabled ? 0 : 1;
+  try {
+    const res  = await fetch(`/api/rules/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...r, enabled: newEnabled })
+    });
+    const json = await res.json();
+    if (json.code === 0) { showToast(newEnabled ? '规则已启用' : '规则已禁用', 'success'); loadRules(); }
+    else { showToast(json.message || '操作失败', 'error'); }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+}
+
+let pendingDeleteId = null;
+
+function confirmDelete(id, name) {
+  pendingDeleteId = id;
+  document.getElementById('confirm-rule-name').textContent = name;
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('confirm-modal')).show();
+}
+
+document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+  if (!pendingDeleteId) return;
+  bootstrap.Modal.getOrCreateInstance(document.getElementById('confirm-modal')).hide();
+  try {
+    const res  = await fetch(`/api/rules/${pendingDeleteId}`, { method: 'DELETE' });
+    const json = await res.json();
+    if (json.code === 0) { showToast('规则已删除', 'success'); loadRules(); }
+    else { showToast(json.message || '删除失败', 'error'); }
+  } catch (e) {
+    showToast('请求失败：' + e.message, 'error');
+  }
+  pendingDeleteId = null;
+});
+
+loadRules();
+</script>
+{% endblock %}
