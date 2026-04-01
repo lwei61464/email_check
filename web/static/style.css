@@ -219,7 +219,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: var(--transition-color);
 }
 .sidebar-nav-section {
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -361,7 +361,7 @@ h1, h2, h3, h4, h5, h6 {
   border-color: rgba(59,130,246,0.25);
 }
 .stat-label {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -379,7 +379,7 @@ h1, h2, h3, h4, h5, h6 {
 .accent-card .stat-number { color: var(--color-accent); }
 .stat-number--green { color: var(--success); }
 .stat-number--red   { color: var(--danger); }
-.stat-number--amber { color: var(--color-accent); }
+.stat-number--amber { color: #f59e0b; }
 .stat-icon {
   width: 36px;
   height: 36px;
@@ -440,7 +440,7 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-bg-subtle);
   border-bottom: 1px solid var(--color-border) !important;
   color: var(--color-text-3);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -453,7 +453,7 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid var(--color-bg-subtle);
   border-top: none;
   vertical-align: middle;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   color: var(--color-text-2);
   transition: background var(--transition-fast);
 }
@@ -501,6 +501,9 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--color-accent);
   border-radius: 3px;
   transition: width 600ms ease;
+}
+.confidence-fill--high {
+  background: var(--success);
 }
 
 /* ===== Buttons ===== */
@@ -647,17 +650,32 @@ h1, h2, h3, h4, h5, h6 {
 [data-theme="dark"] .pager-btn.active { color: var(--color-accent); }
 
 /* ===== Detail Row ===== */
-.detail-row > td {
-  padding: 0 !important;
-  border-top: none !important;
-}
-.detail-content {
-  padding: 14px 18px;
+/* max-height 不作用于 <td>，需在 td 内的 div 上控制折叠 */
+.detail-inner {
+  max-height: 0;
+  overflow: hidden;
   background: var(--color-bg-subtle);
   font-size: 0.82rem;
   color: var(--color-text-2);
+  transition: max-height 220ms ease, padding 220ms ease, var(--transition-color);
+}
+.detail-row.show .detail-inner {
+  max-height: 200px;
+  padding: 14px 18px;
   border-top: 1px solid var(--color-border);
-  transition: var(--transition-color);
+}
+
+/* 可展开行：鼠标指针 + 展开箭头 */
+.table tbody tr[data-idx] {
+  cursor: pointer;
+}
+.expand-icon {
+  display: inline-block;
+  font-size: 0.65rem;
+  color: var(--color-text-3);
+  transition: transform 200ms ease;
+  margin-left: 6px;
+  vertical-align: middle;
 }
 
 /* ===== Toast ===== */
@@ -717,10 +735,47 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0;
   animation: fadeInUp 300ms ease forwards;
 }
+.anim-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 250ms ease forwards;
+}
+
+/* ===== Detail Row Key Label ===== */
+.detail-key {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-3);
+  margin-right: 5px;
+}
+
+/* ===== Sidebar Toggle (mobile) ===== */
+.sidebar-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+.sidebar-toggle:hover { background: var(--color-bg-subtle); }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .sidebar, .sidebar-brand { display: none; }
+  .sidebar-toggle { display: inline-flex; }
+  .sidebar, .sidebar-brand {
+    display: flex;
+    transform: translateX(-100%);
+    transition: transform 250ms ease;
+  }
+  .sidebar.sidebar--open,
+  .sidebar-brand.sidebar-brand--open {
+    transform: translateX(0);
+  }
   .topbar     { left: 0; }
   .main-content { margin-left: 0; padding-left: 16px; padding-right: 16px; }
 }

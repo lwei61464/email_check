@@ -11,7 +11,7 @@
 <!-- 添加表单 -->
 <div class="filter-bar mb-3">
   <div class="row g-2 align-items-end">
-    <div class="col-sm-3">
+    <div class="col-sm-4">
       <label>规则名称</label>
       <input type="text" class="form-control form-control-sm" id="input-name" placeholder="例：GitHub 通知" maxlength="100">
     </div>
@@ -23,7 +23,7 @@
         <option value="body">正文</option>
       </select>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <label>匹配方式</label>
       <select class="form-select form-select-sm" id="input-operator">
         <option value="contains">包含</option>
@@ -32,27 +32,29 @@
         <option value="regex">正则表达式</option>
       </select>
     </div>
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <label>匹配值</label>
       <input type="text" class="form-control form-control-sm" id="input-value" placeholder="@github.com">
     </div>
-    <div class="col-sm-1">
-      <label>分类</label>
+  </div>
+  <div class="row g-2 align-items-end mt-1">
+    <div class="col-sm-3">
+      <label>目标分类</label>
       <select class="form-select form-select-sm" id="input-action-cat">
-        <option value="important">重要</option>
-        <option value="normal">普通</option>
-        <option value="spam">垃圾</option>
-        <option value="newsletter">订阅</option>
-        <option value="transactional">事务</option>
+        <option value="important">重要邮件</option>
+        <option value="normal">普通邮件</option>
+        <option value="spam">垃圾邮件</option>
+        <option value="newsletter">订阅资讯</option>
+        <option value="transactional">事务通知</option>
       </select>
     </div>
-    <div class="col-sm-1">
+    <div class="col-sm-2">
       <label>优先级</label>
       <input type="number" class="form-control form-control-sm" id="input-priority" value="0" min="0">
     </div>
-    <div class="col-sm-1">
+    <div class="col-sm-2">
       <button class="btn-amber btn-sm w-100" onclick="addRule()">
-        <i class="bi bi-plus-lg"></i> 添加
+        <i class="bi bi-plus-lg"></i> 添加规则
       </button>
     </div>
   </div>
@@ -144,8 +146,8 @@ async function loadRules() {
         <td><span class="${CAT_BADGE[r.action_cat] || 'badge-normal'}">${CAT_LABELS[r.action_cat] || r.action_cat}</span></td>
         <td style="font-family:var(--font-mono);font-size:0.78rem;text-align:center">${r.priority}</td>
         <td>
-          <button class="btn-sm ${r.enabled ? 'btn-amber' : 'btn-ghost'} btn-toggle-rule">
-            ${r.enabled ? '启用' : '禁用'}
+          <button class="btn-sm ${r.enabled ? 'btn-ghost' : 'btn-amber'} btn-toggle-rule">
+            ${r.enabled ? '禁用' : '启用'}
           </button>
         </td>
         <td>

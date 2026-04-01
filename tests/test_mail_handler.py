@@ -46,6 +46,12 @@ def settings():
     s.spam_confidence_threshold = 0.90
     s.quarantine_retention_days = 7
     s.review_retention_days = 14
+    s.folder_archive       = FOLDER_ARCHIVE
+    s.folder_important     = FOLDER_IMPORTANT
+    s.folder_newsletter    = FOLDER_NEWSLETTER
+    s.folder_transactional = FOLDER_TRANSACTIONAL
+    s.folder_quarantine    = FOLDER_QUARANTINE
+    s.folder_review        = FOLDER_REVIEW
     return s
 
 

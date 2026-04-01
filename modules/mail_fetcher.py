@@ -82,3 +82,21 @@ class MailFetcher:
         if not self._client.folder_exists(folder_name):
             self._client.create_folder(folder_name)
             logger.info("已创建 IMAP 文件夹: %s", folder_name)
+
+    def watch_idle(self, on_new_mail, idle_timeout: int = 300):
+        """
+        进入 IMAP IDLE 状态，等待服务器推送新邮件通知，收到后调用 on_new_mail()。
+        idle_timeout 秒后主动续期（保持连接），循环运行直到 on_new_mail 抛出异常。
+
+        :param on_new_mail: 收到新邮件通知时的回调（无参数）
+        :param idle_timeout: IDLE 超时时间（秒），默认 300s
+        """
+        self._client.select_folder("INBOX", readonly=False)
+        logger.info("进入 IMAP IDLE 模式，idle_timeout=%ss", idle_timeout)
+        while True:
+            self._client.idle()
+            responses = self._client.idle_check(timeout=idle_timeout)
+            self._client.idle_done()
+            if responses:
+                logger.info("IDLE 收到服务器推送，触发邮件处理")
+                on_new_mail()

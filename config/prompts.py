@@ -30,7 +30,9 @@ EMAIL_CLASSIFICATION_PROMPT = """
 - 发件人：{sender}
 - 主题：{subject}
 - 正文摘要：{content}
-{important_senders_hint}
+- 附件：{attachments}
+{important_senders_hint}{corrections_hint}
+
 ## 分类决策树（按优先级从上到下判断，命中即停止）
 
 ### 第1步 → spam（垃圾/骚扰/钓鱼）
@@ -63,6 +65,7 @@ EMAIL_CLASSIFICATION_PROMPT = """
 - 账号安全告警：异常登录、密码被修改、设备新增
 - 对方明确提出问题，或要求确认/回复/审批/签署
 - 包含需要处理的审批流程或需签署的文件附件
+- 附件为 PDF/合同/报价单/协议等业务文档（.pdf、.doc、.docx、.xlsx 等）
 
 ### 第5步 → normal（日常工作邮件）
 不符合以上任何一步，则归为 normal：

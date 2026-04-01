@@ -14,3 +14,4 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 if __name__ == "__main__":
     port = int(os.getenv("WEB_PORT", "8080"))
     uvicorn.run("web.app:app", host="127.0.0.1", port=port, reload=False)
+

@@ -239,7 +239,7 @@ class TestClassifyWithMockedChain:
         assert result.confidence == 0.0
 
     def test_invoke_exception_fallback_matches_fallback_result(self, classifier):
-        """降级结果各字段与 _FALLBACK_RESULT 完全一致。"""
+        """降级结果 category/action_code/confidence 与 _FALLBACK_RESULT 一致（reason 由降级路径决定）。"""
         mock_chain = MagicMock()
         mock_chain.invoke.side_effect = ConnectionError("API unreachable")
         classifier._chain = mock_chain
@@ -247,8 +247,8 @@ class TestClassifyWithMockedChain:
         result = classifier.classify(_make_parsed_email())
         assert result.category == _FALLBACK_RESULT["category"]
         assert result.action_code == _FALLBACK_RESULT["action_code"]
-        assert result.reason == _FALLBACK_RESULT["reason"]
         assert result.confidence == _FALLBACK_RESULT["confidence"]
+        assert result.reason  # 降级路径会提供非空 reason
 
     def test_invoke_called_with_correct_keys(self, classifier):
         """chain.invoke 被调用时传入包含 sender/subject/content 键的字典。"""

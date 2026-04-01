@@ -46,6 +46,10 @@ class _FakeSettings:
     """仅提供 EmailClassifier.__init__ 所需的最小属性，不触及真实 API。"""
     dashscope_api_key = "fake-key-for-tests"
     qwen_model = "qwen-plus"
+    llm_circuit_breaker_threshold = 5
+    llm_circuit_breaker_reset = 300
+    llm_max_retries = 3
+    important_senders = []
 
 
 @pytest.fixture

@@ -17,6 +17,7 @@ import imapclient
 
 logger = logging.getLogger(__name__)
 
+# 模块级常量保留用于向下兼容（外部代码可能直接引用）
 FOLDER_ARCHIVE       = "普通邮件"
 FOLDER_IMPORTANT     = "重要邮件"
 FOLDER_NEWSLETTER    = "订阅资讯"
@@ -31,6 +32,14 @@ class MailHandler:
         self.imap_client = imap_client
         self.blacklist_manager = blacklist_manager
         self._ensured_folders: set = set()   # 本次连接已确认存在的文件夹，避免重复查询
+
+        # 从配置读取文件夹名（有默认值，向下兼容）
+        self._f_archive       = getattr(settings, "folder_archive",       FOLDER_ARCHIVE)
+        self._f_important     = getattr(settings, "folder_important",     FOLDER_IMPORTANT)
+        self._f_newsletter    = getattr(settings, "folder_newsletter",    FOLDER_NEWSLETTER)
+        self._f_transactional = getattr(settings, "folder_transactional", FOLDER_TRANSACTIONAL)
+        self._f_quarantine    = getattr(settings, "folder_quarantine",    FOLDER_QUARANTINE)
+        self._f_review        = getattr(settings, "folder_review",        FOLDER_REVIEW)
 
     # ── 分发入口 ──────────────────────────────────────────────────────────────
 
@@ -59,8 +68,8 @@ class MailHandler:
         """
         conf_threshold = self.settings.spam_confidence_threshold
         if confidence >= conf_threshold:
-            self._ensure_folder(FOLDER_QUARANTINE)
-            self._copy_message(uid, FOLDER_QUARANTINE)
+            self._ensure_folder(self._f_quarantine)
+            self._copy_message(uid, self._f_quarantine)
             self._try_set_junk_flag(uid)
             bl_threshold = getattr(self.settings, "blacklist_threshold", 3)
             added = self.blacklist_manager.try_auto_blacklist(
@@ -73,37 +82,37 @@ class MailHandler:
                 logger.info("Spam（高置信 %.2f）→ 复制到垃圾隔离，发件人 %s 未达加黑名单阈值",
                             confidence, sender)
         else:
-            self._ensure_folder(FOLDER_REVIEW)
-            self._copy_message(uid, FOLDER_REVIEW)
+            self._ensure_folder(self._f_review)
+            self._copy_message(uid, self._f_review)
             logger.info("Spam（低置信 %.2f）→ 复制到待审核，INBOX 原件保留，发件人 %s 不加黑名单",
                         confidence, sender)
 
     def handle_normal(self, uid: int):
         """普通邮件：复制到 Archive。INBOX 原件保留、保持未读。"""
-        self._handle_with_folder(uid, FOLDER_ARCHIVE, "Normal")
+        self._handle_with_folder(uid, self._f_archive, "Normal")
 
     def handle_important(self, uid: int):
         """重要邮件：INBOX 打星标 + 复制到 Important。保持未读。通知由 Notifier 处理。"""
         self.imap_client.add_flags([uid], [imapclient.FLAGGED])
-        self._handle_with_folder(uid, FOLDER_IMPORTANT, "Important", inbox_starred=True)
+        self._handle_with_folder(uid, self._f_important, "Important", inbox_starred=True)
 
     def handle_newsletter(self, uid: int):
         """订阅资讯：复制到 Newsletter。INBOX 原件保留、保持未读。"""
-        self._handle_with_folder(uid, FOLDER_NEWSLETTER, "Newsletter")
+        self._handle_with_folder(uid, self._f_newsletter, "Newsletter")
 
     def handle_transactional(self, uid: int):
         """事务性通知：复制到 Transactional。INBOX 原件保留、保持未读。"""
-        self._handle_with_folder(uid, FOLDER_TRANSACTIONAL, "Transactional")
+        self._handle_with_folder(uid, self._f_transactional, "Transactional")
 
     # ── 清理过期副本 ──────────────────────────────────────────────────────────
 
     def cleanup_review(self):
         """清理 Review 文件夹中超过保留期的副本（硬删除副本，不影响 INBOX）。"""
-        self._cleanup_folder(FOLDER_REVIEW, self.settings.review_retention_days)
+        self._cleanup_folder(self._f_review, self.settings.review_retention_days)
 
     def cleanup_quarantine(self):
         """清理 Quarantine 文件夹中超过保留期的副本（硬删除副本，不影响 INBOX）。"""
-        self._cleanup_folder(FOLDER_QUARANTINE, self.settings.quarantine_retention_days)
+        self._cleanup_folder(self._f_quarantine, self.settings.quarantine_retention_days)
 
     # ── 内部工具方法 ──────────────────────────────────────────────────────────
 

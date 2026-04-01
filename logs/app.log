@@ -426,3 +426,235 @@
 2026-03-30 18:42:09,866 [INFO] modules.mail_fetcher: IMAP 连接已断开
 2026-03-30 18:42:09,868 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-30 18:43:08 JST)" executed successfully
 2026-03-30 18:43:08,813 [INFO] scheduler: 调度器已停止。
+2026-03-31 13:15:03,906 [INFO] __main__: 邮件自动分拣系统启动...
+2026-03-31 13:15:03,909 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-03-31 13:15:03,917 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-03-31 13:15:03,917 [INFO] scheduler: 调度器启动（轮询模式），间隔：60s，立即执行首次检测
+2026-03-31 13:15:03,917 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:15:04,738 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:15:05,228 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:15:05,228 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:15:05,294 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:15:05,296 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-03-31 13:15:05,296 [INFO] apscheduler.scheduler: Scheduler started
+2026-03-31 13:16:03,931 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:17:03 JST)" (scheduled at 2026-03-31 13:16:03.917447+09:00)
+2026-03-31 13:16:03,931 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:16:04,595 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:16:04,979 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:16:04,979 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:16:05,048 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:16:05,050 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:17:03 JST)" executed successfully
+2026-03-31 13:17:03,926 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:18:03 JST)" (scheduled at 2026-03-31 13:17:03.917447+09:00)
+2026-03-31 13:17:03,927 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:17:04,623 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:17:05,016 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:17:05,016 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:17:05,083 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:17:05,085 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:18:03 JST)" executed successfully
+2026-03-31 13:18:03,924 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:19:03 JST)" (scheduled at 2026-03-31 13:18:03.917447+09:00)
+2026-03-31 13:18:03,924 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:18:04,595 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:18:04,979 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:18:04,979 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:18:05,044 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:18:05,047 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:19:03 JST)" executed successfully
+2026-03-31 13:19:03,928 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:20:03 JST)" (scheduled at 2026-03-31 13:19:03.917447+09:00)
+2026-03-31 13:19:03,928 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:19:04,733 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:19:05,114 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:19:05,114 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:19:05,185 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:19:05,187 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:20:03 JST)" executed successfully
+2026-03-31 13:20:03,935 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:21:03 JST)" (scheduled at 2026-03-31 13:20:03.917447+09:00)
+2026-03-31 13:20:03,935 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-03-31 13:20:04,643 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-03-31 13:20:05,037 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 44 封）
+2026-03-31 13:20:05,037 [INFO] scheduler: 本轮无新邮件
+2026-03-31 13:20:05,110 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-03-31 13:20:05,112 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-03-31 13:21:03 JST)" executed successfully
+2026-03-31 13:21:03,926 [INFO] scheduler: 调度器已停止。
+2026-04-01 00:23:50,593 [INFO] __main__: 邮件自动分拣系统启动...
+2026-04-01 00:23:50,598 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-04-01 00:23:50,605 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-01 00:23:50,605 [INFO] scheduler: 调度器启动（轮询模式），间隔：60s，立即执行首次检测
+2026-04-01 00:23:50,605 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 00:23:51,470 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 00:23:52,004 [INFO] modules.mail_fetcher: 发现新邮件 1 封（未读共 33 封）
+2026-04-01 00:23:52,496 [INFO] scheduler: 处理邮件 UID=1251 | 发件人: uber@uber.com | 主题: 选择经典美味
+2026-04-01 00:44:50,623 [WARNING] modules.mail_fetcher: 断开 IMAP 时出现异常（已忽略）: socket error: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2026-04-01 00:50:15,597 [INFO] __main__: 邮件自动分拣系统启动...
+2026-04-01 00:50:15,601 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-04-01 00:50:15,607 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-01 00:50:15,607 [INFO] scheduler: 调度器启动（轮询模式），间隔：60s，立即执行首次检测
+2026-04-01 00:50:15,608 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 00:50:16,432 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 00:50:17,026 [INFO] modules.mail_fetcher: 发现新邮件 1 封（未读共 33 封）
+2026-04-01 00:50:17,537 [INFO] scheduler: 处理邮件 UID=1251 | 发件人: uber@uber.com | 主题: 选择经典美味
+2026-04-01 09:23:20,572 [INFO] modules.classifier: LangChain 调用链构建完成，模型: qwen-plus
+2026-04-01 09:23:32,711 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: Uber Eats 餐饮推荐邮件，属常规服务资讯，与工作无关且无需立即行动
+2026-04-01 09:23:32,716 [ERROR] scheduler: 邮件 UID=1251 处理失败: socket error: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+Traceback (most recent call last):
+  File "D:\Python\Lib\imaplib.py", line 1025, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Python\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "D:\Python\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\simple\email_sorter\scheduler.py", line 145, in _process_one
+    handler.handle(uid, parsed, result)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 58, in handle
+    self.handle_normal(uid)
+    ~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 92, in handle_normal
+    self._handle_with_folder(uid, self._f_archive, "Normal")
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 125, in _handle_with_folder
+    self._ensure_folder(folder)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 168, in _ensure_folder
+    if not self.imap_client.folder_exists(folder_name):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 1052, in folder_exists
+    return len(self.list_folders("", folder)) > 0
+               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 696, in list_folders
+    return self._do_list("LIST", directory, pattern)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 742, in _do_list
+    typ, dat = self._imap._simple_command(cmd, directory, pattern)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 1249, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 1027, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2026-04-01 09:23:32,781 [ERROR] scheduler: 流水线执行异常: socket error: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+Traceback (most recent call last):
+  File "D:\Python\Lib\imaplib.py", line 1025, in _command
+    self.send(data + CRLF)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 341, in send
+    self.sock.sendall(data)
+    ~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\Python\Lib\ssl.py", line 1263, in sendall
+    v = self.send(byte_view[count:])
+  File "D:\Python\Lib\ssl.py", line 1232, in send
+    return self._sslobj.write(data)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\simple\email_sorter\scheduler.py", line 70, in _run_pipeline
+    handler.cleanup_quarantine()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 115, in cleanup_quarantine
+    self._cleanup_folder(self._f_quarantine, self.settings.quarantine_retention_days)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\modules\mail_handler.py", line 150, in _cleanup_folder
+    if not self.imap_client.folder_exists(folder_name):
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 1052, in folder_exists
+    return len(self.list_folders("", folder)) > 0
+               ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 696, in list_folders
+    return self._do_list("LIST", directory, pattern)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\simple\email_sorter\.venv\Lib\site-packages\imapclient\imapclient.py", line 742, in _do_list
+    typ, dat = self._imap._simple_command(cmd, directory, pattern)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 1249, in _simple_command
+    return self._command_complete(name, self._command(name, *args))
+                                        ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\Python\Lib\imaplib.py", line 1027, in _command
+    raise self.abort('socket error: %s' % val)
+imaplib.IMAP4.abort: socket error: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+2026-04-01 09:23:32,785 [WARNING] modules.mail_fetcher: 断开 IMAP 时出现异常（已忽略）: socket error: [SSL: BAD_LENGTH] bad length (_ssl.c:2500)
+2026-04-01 09:23:32,813 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-04-01 09:23:32,813 [INFO] apscheduler.scheduler: Scheduler started
+2026-04-01 09:24:15,616 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 09:25:15 JST)" (scheduled at 2026-04-01 09:24:15.607715+09:00)
+2026-04-01 09:24:15,617 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 09:24:16,412 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 09:24:16,994 [INFO] modules.mail_fetcher: 发现新邮件 2 封（未读共 34 封）
+2026-04-01 09:24:17,421 [INFO] scheduler: 处理邮件 UID=1251 | 发件人: uber@uber.com | 主题: 选择经典美味
+2026-04-01 09:24:17,651 [INFO] scheduler: 处理邮件 UID=1252 | 发件人: mail@debit.bk.mufg.jp | 主题: 【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用代金お引落し（またはご入金）のお知らせ
+2026-04-01 09:24:24,093 [INFO] scheduler: 分类结果: transactional（置信度: 0.99）原因: 银行VISA借记卡交易扣款通知，含个人姓名、金额、商户、时效性资金操作信息
+2026-04-01 09:24:24,690 [INFO] modules.mail_handler: Transactional → 复制到 事务通知，INBOX 原件保留，UID: 1252
+2026-04-01 09:24:26,791 [INFO] scheduler: 分类结果: normal（置信度: 0.82）原因: Uber Eats 商家推荐邮件，属常规商业推送，与工作无关但无垃圾特征
+2026-04-01 09:24:27,233 [INFO] modules.mail_handler: Normal → 复制到 普通邮件，INBOX 原件保留，UID: 1251
+2026-04-01 09:24:28,051 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 09:24:28,061 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 09:25:15 JST)" executed successfully
+2026-04-01 10:46:32,068 [INFO] __main__: 邮件自动分拣系统启动...
+2026-04-01 10:46:32,072 [INFO] storage.db: 数据库初始化完成：storage/email_sorter.db
+2026-04-01 10:46:32,077 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-04-01 10:46:32,077 [INFO] scheduler: 调度器启动（轮询模式），间隔：60s，立即执行首次检测
+2026-04-01 10:46:32,078 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:46:33,972 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:46:34,575 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:46:34,575 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:46:34,650 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:46:34,652 [INFO] apscheduler.scheduler: Added job "EmailScheduler._run_pipeline" to job store "default"
+2026-04-01 10:46:34,652 [INFO] apscheduler.scheduler: Scheduler started
+2026-04-01 10:47:32,082 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:48:32 JST)" (scheduled at 2026-04-01 10:47:32.077719+09:00)
+2026-04-01 10:47:32,082 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:47:32,776 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:47:33,246 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:47:33,246 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:47:33,320 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:47:33,322 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:48:32 JST)" executed successfully
+2026-04-01 10:48:32,084 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:49:32 JST)" (scheduled at 2026-04-01 10:48:32.077719+09:00)
+2026-04-01 10:48:32,084 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:48:32,760 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:48:33,158 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:48:33,159 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:48:33,227 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:48:33,229 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:49:32 JST)" executed successfully
+2026-04-01 10:49:32,088 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:50:32 JST)" (scheduled at 2026-04-01 10:49:32.077719+09:00)
+2026-04-01 10:49:32,088 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:49:32,715 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:49:33,192 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:49:33,192 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:49:33,255 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:49:33,258 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:50:32 JST)" executed successfully
+2026-04-01 10:50:32,081 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:51:32 JST)" (scheduled at 2026-04-01 10:50:32.077719+09:00)
+2026-04-01 10:50:32,082 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:50:32,739 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:50:33,204 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:50:33,204 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:50:33,269 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:50:33,271 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:51:32 JST)" executed successfully
+2026-04-01 10:51:32,080 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:52:32 JST)" (scheduled at 2026-04-01 10:51:32.077719+09:00)
+2026-04-01 10:51:32,081 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:51:32,798 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:51:33,228 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:51:33,228 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:51:33,301 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:51:33,303 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:52:32 JST)" executed successfully
+2026-04-01 10:52:32,095 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:53:32 JST)" (scheduled at 2026-04-01 10:52:32.077719+09:00)
+2026-04-01 10:52:32,095 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:52:32,784 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:52:33,191 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:52:33,191 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:52:33,258 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:52:33,260 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:53:32 JST)" executed successfully
+2026-04-01 10:53:32,092 [INFO] apscheduler.executors.default: Running job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:54:32 JST)" (scheduled at 2026-04-01 10:53:32.077719+09:00)
+2026-04-01 10:53:32,092 [INFO] modules.mail_fetcher: 连接 IMAP 服务器: imap.qq.com:993（超时 30s）
+2026-04-01 10:53:32,760 [INFO] modules.mail_fetcher: IMAP 登录成功: 1322810946@qq.com
+2026-04-01 10:53:33,165 [INFO] modules.mail_fetcher: 发现新邮件 0 封（未读共 34 封）
+2026-04-01 10:53:33,165 [INFO] scheduler: 本轮无新邮件
+2026-04-01 10:53:33,230 [INFO] modules.mail_fetcher: IMAP 连接已断开
+2026-04-01 10:53:33,232 [INFO] apscheduler.executors.default: Job "EmailScheduler._run_pipeline (trigger: interval[0:01:00], next run at: 2026-04-01 10:54:32 JST)" executed successfully
+2026-04-01 10:54:32,078 [INFO] scheduler: 调度器已停止。

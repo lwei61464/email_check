@@ -12,7 +12,15 @@
       "Bash(python -m json.tool __NEW_LINE_9cbbfb785b066883__ echo \"\" echo \"=== Boundary: Invalid list_type on GET ===\" curl -s \"$BASE/api/blacklist?list_type=invalid\")",
       "Bash(python -m json.tool __NEW_LINE_9cbbfb785b066883__ echo \"\" echo \"=== Boundary: stats recent limit out of range ===\" curl -s \"$BASE/api/emails/recent?limit=999\")",
       "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_28714d43ee53f3a7__ echo \"=== Page routes \\(HTML rendering\\) ===\" echo \"-- / \\(dashboard\\) --\" curl -s \"$BASE/\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"-- /emails --\" curl -s \"$BASE/emails\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"-- /blacklist --\" curl -s \"$BASE/blacklist\" -o /dev/null -w \"Status: %{http_code}\\\\n\" __NEW_LINE_28714d43ee53f3a7__ echo \"\" echo \"=== Check HTML structure - data-theme attribute ===\" curl -s \"$BASE/\")",
-      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_1dcb489ce6d4a577__ echo \"=== Check CSS variables in style.css ===\" curl -s \"$BASE/static/style.css\")"
+      "Bash(BASE=\"http://localhost:9090\" __NEW_LINE_1dcb489ce6d4a577__ echo \"=== Check CSS variables in style.css ===\" curl -s \"$BASE/static/style.css\")",
+      "Bash(python:*)",
+      "Bash(bash \"C:/Users/simple/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh\" --project-dir \"C:/Users/simple/email_sorter\")",
+      "Bash(cat C:/Users/simple/email_sorter/.superpowers/brainstorm/*/state/server-info)",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v 2>&1)",
+      "Bash(.venv/Scripts/pip install:*)"
     ]
+  },
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true
   }
 }

@@ -62,6 +62,47 @@ class Settings:
         default_factory=lambda: int(os.getenv("REVIEW_RETENTION_DAYS", "14"))
     )
 
+    # LLM 故障容错配置
+    llm_timeout_seconds: int = field(
+        default_factory=lambda: int(os.getenv("LLM_TIMEOUT_SECONDS", "30"))
+    )
+    llm_max_retries: int = field(
+        default_factory=lambda: int(os.getenv("LLM_MAX_RETRIES", "3"))
+    )
+    llm_circuit_breaker_threshold: int = field(
+        default_factory=lambda: int(os.getenv("LLM_CIRCUIT_BREAKER_THRESHOLD", "5"))
+    )
+    llm_circuit_breaker_reset: int = field(
+        default_factory=lambda: int(os.getenv("LLM_CIRCUIT_BREAKER_RESET", "300"))
+    )
+
+    # IMAP 推送模式：poll（轮询）| idle（实时推送）
+    imap_mode: str = field(
+        default_factory=lambda: os.getenv("IMAP_MODE", "poll").lower()
+    )
+
+    # 触发通知的分类列表（逗号分隔，默认只通知 important）
+    notify_on_categories: list = field(
+        default_factory=lambda: [
+            c.strip().lower()
+            for c in os.getenv("NOTIFY_ON_CATEGORIES", "important").split(",")
+            if c.strip()
+        ]
+    )
+
+    # 并发处理邮件数（仅影响 LLM 调用并发，DB 写入仍串行）
+    max_concurrent_emails: int = field(
+        default_factory=lambda: int(os.getenv("MAX_CONCURRENT_EMAILS", "3"))
+    )
+
+    # IMAP 文件夹名称（可自定义，默认中文）
+    folder_archive:       str = field(default_factory=lambda: os.getenv("FOLDER_ARCHIVE",       "普通邮件"))
+    folder_important:     str = field(default_factory=lambda: os.getenv("FOLDER_IMPORTANT",     "重要邮件"))
+    folder_newsletter:    str = field(default_factory=lambda: os.getenv("FOLDER_NEWSLETTER",    "订阅资讯"))
+    folder_transactional: str = field(default_factory=lambda: os.getenv("FOLDER_TRANSACTIONAL", "事务通知"))
+    folder_quarantine:    str = field(default_factory=lambda: os.getenv("FOLDER_QUARANTINE",    "垃圾隔离"))
+    folder_review:        str = field(default_factory=lambda: os.getenv("FOLDER_REVIEW",        "待审核"))
+
     def validate(self):
         """校验必填配置项，缺失时抛出异常。"""
         required = {

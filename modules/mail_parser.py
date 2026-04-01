@@ -17,11 +17,16 @@ logger = logging.getLogger(__name__)
 @dataclass
 class ParsedEmail:
     uid: str
-    sender: str        # 发件人邮箱地址（纯地址）
-    sender_name: str   # 发件人显示名称
-    subject: str       # 邮件主题
-    body: str          # 正文纯文本
-    raw_date: str      # 原始日期字符串
+    sender: str              # 发件人邮箱地址（纯地址）
+    sender_name: str         # 发件人显示名称
+    subject: str             # 邮件主题
+    body: str                # 正文纯文本
+    raw_date: str            # 原始日期字符串
+    attachments: list = None  # 附件文件名列表（解析后填充）
+
+    def __post_init__(self):
+        if self.attachments is None:
+            self.attachments = []
 
 
 class MailParser:
@@ -31,6 +36,7 @@ class MailParser:
         subject = self._decode_header(msg.get("Subject", "（无主题）"))
         body = self._extract_body(msg)
         raw_date = msg.get("Date", "")
+        attachments = self._extract_attachments(msg)
         return ParsedEmail(
             uid=uid,
             sender=sender_addr,
@@ -38,6 +44,7 @@ class MailParser:
             subject=subject,
             body=body[:3000],   # 截断过长正文，降低 Token 消耗
             raw_date=raw_date,
+            attachments=attachments,
         )
 
     def _decode_header(self, header_value: str) -> str:
@@ -91,6 +98,19 @@ class MailParser:
             return payload.decode(charset, errors="replace")
         except (LookupError, UnicodeDecodeError):
             return payload.decode("utf-8", errors="replace")
+
+    def _extract_attachments(self, msg) -> list:
+        """提取附件文件名列表（跳过内嵌图片等非真正附件）。"""
+        names = []
+        if msg.is_multipart():
+            for part in msg.walk():
+                disposition = str(part.get("Content-Disposition", ""))
+                if "attachment" not in disposition:
+                    continue
+                filename = part.get_filename()
+                if filename:
+                    names.append(self._decode_header(filename))
+        return names
 
     def _extract_sender_address(self, from_field: str) -> tuple:
         name_raw, addr = email.utils.parseaddr(from_field)

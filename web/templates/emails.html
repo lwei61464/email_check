@@ -51,11 +51,11 @@
   <table class="table mb-0" id="email-table" style="display:none">
     <thead>
       <tr>
-        <th style="width:200px">发件人</th>
+        <th style="width:20%">发件人</th>
         <th>主题</th>
         <th style="width:90px">分类</th>
-        <th style="width:90px">置信度</th>
-        <th style="width:140px">处理时间</th>
+        <th style="width:100px">置信度</th>
+        <th style="width:150px">处理时间</th>
       </tr>
     </thead>
     <tbody id="email-tbody"></tbody>
@@ -63,7 +63,7 @@
 </div>
 
 <!-- 分页 -->
-<div class="d-flex justify-content-between align-items-center mt-3" id="pagination-bar" style="display:none!important">
+<div class="d-flex justify-content-between align-items-center mt-3 d-none" id="pagination-bar">
   <span id="page-info" style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-secondary)"></span>
   <div class="pager" id="pagination-ul"></div>
 </div>
@@ -108,7 +108,7 @@ async function loadEmails() {
 
     if (!items || items.length === 0) {
       document.getElementById('email-empty').style.display = '';
-      document.getElementById('pagination-bar').style.display = 'none';
+      document.getElementById('pagination-bar').classList.add('d-none');
       return;
     }
 
@@ -119,8 +119,8 @@ async function loadEmails() {
       const hiCls = pct >= 80 ? 'confidence-fill--high' : '';
       return `
       <tr onclick="toggleDetail(${i})" data-idx="${i}" class="anim-fade-in-up" style="animation-delay:${i * 22}ms">
-        <td class="text-truncate" style="max-width:200px;font-size:0.82rem" title="${r.sender}">${r.sender}</td>
-        <td class="text-truncate" style="max-width:280px;font-size:0.82rem" title="${r.subject || ''}">${r.subject || '（无主题）'}</td>
+        <td class="text-truncate" style="max-width:0" title="${r.sender}">${r.sender}</td>
+        <td class="text-truncate" style="max-width:0" title="${r.subject || ''}">${r.subject || '（无主题）'}<i class="bi bi-chevron-down expand-icon" id="icon-${i}"></i></td>
         <td><span class="${BADGE_CLASS[r.category] || 'badge-normal'}">${CATEGORY_LABELS[r.category] || r.category}</span></td>
         <td>
           <div class="d-flex align-items-center gap-1">
@@ -131,21 +131,23 @@ async function loadEmails() {
         <td style="font-family:var(--font-mono);font-size:0.76rem;color:var(--text-secondary)">${r.processed_at || ''}</td>
       </tr>
       <tr class="detail-row" id="detail-${i}">
-        <td colspan="5" class="detail-content">
-          <div class="d-flex gap-4 flex-wrap align-items-center">
-            <span><span class="detail-key">原因</span>${r.reason || '—'}</span>
-            <span><span class="detail-key">动作</span><span style="font-family:var(--font-mono);font-size:0.8rem">${r.action_code || '—'}</span></span>
-            <span class="d-flex align-items-center gap-2 ms-auto">
-              <span class="detail-key" style="margin-right:0">纠错</span>
-              <select class="form-select form-select-sm" id="correct-sel-${i}" style="width:auto;font-size:0.78rem;padding:0.2rem 1.6rem 0.2rem 0.5rem">
-                <option value="spam">垃圾邮件</option>
-                <option value="transactional">事务通知</option>
-                <option value="newsletter">订阅资讯</option>
-                <option value="normal">普通邮件</option>
-                <option value="important">重要邮件</option>
-              </select>
-              <button class="btn-amber btn-sm" onclick="submitCorrection('${r.uid}', ${i})">提交</button>
-            </span>
+        <td colspan="5" style="padding:0!important;border-top:none!important">
+          <div class="detail-inner">
+            <div class="d-flex gap-4 flex-wrap align-items-center">
+              <span><span class="detail-key">原因</span>${r.reason || '—'}</span>
+              <span><span class="detail-key">动作</span><span style="font-family:var(--font-mono);font-size:0.8rem">${r.action_code || '—'}</span></span>
+              <span class="d-flex align-items-center gap-2 ms-auto">
+                <span class="detail-key" style="margin-right:0">纠错</span>
+                <select class="form-select form-select-sm" id="correct-sel-${i}" onclick="event.stopPropagation()" style="width:auto;font-size:0.78rem;padding:0.2rem 1.6rem 0.2rem 0.5rem">
+                  <option value="spam" ${r.category==='spam'?'selected':''}>垃圾邮件</option>
+                  <option value="transactional" ${r.category==='transactional'?'selected':''}>事务通知</option>
+                  <option value="newsletter" ${r.category==='newsletter'?'selected':''}>订阅资讯</option>
+                  <option value="normal" ${r.category==='normal'?'selected':''}>普通邮件</option>
+                  <option value="important" ${r.category==='important'?'selected':''}>重要邮件</option>
+                </select>
+                <button class="btn-amber btn-sm" onclick="event.stopPropagation();submitCorrection('${r.uid}', ${i})">提交</button>
+              </span>
+            </div>
           </div>
         </td>
       </tr>`;
@@ -155,7 +157,7 @@ async function loadEmails() {
     const totalPages = Math.ceil(total / PAGE_SIZE);
     document.getElementById('page-info').textContent = `共 ${total} 条 · 第 ${page}/${totalPages} 页`;
     renderPagination(totalPages);
-    document.getElementById('pagination-bar').style.display = '';
+    document.getElementById('pagination-bar').classList.remove('d-none');
   } catch (e) {
     document.getElementById('email-loading').style.display = 'none';
     showToast('加载失败：' + e.message, 'error');
@@ -163,8 +165,10 @@ async function loadEmails() {
 }
 
 function toggleDetail(idx) {
-  const row = document.getElementById('detail-' + idx);
-  row.classList.toggle('show');
+  const row  = document.getElementById('detail-' + idx);
+  const icon = document.getElementById('icon-' + idx);
+  const open = row.classList.toggle('show');
+  if (icon) icon.style.transform = open ? 'rotate(180deg)' : '';
 }
 
 function renderPagination(totalPages) {
@@ -178,7 +182,7 @@ function renderPagination(totalPages) {
   container.innerHTML = btns.join('');
 }
 
-function goPage(p) { currentPage = p; loadEmails(); return false; }
+function goPage(p) { currentPage = p; loadEmails(); window.scrollTo({ top: 0, behavior: 'smooth' }); return false; }
 
 async function submitCorrection(uid, idx) {
   const sel = document.getElementById('correct-sel-' + idx);

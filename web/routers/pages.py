@@ -24,3 +24,8 @@ def emails(request: Request):
 @router.get("/blacklist")
 def blacklist(request: Request):
     return templates.TemplateResponse(request, "blacklist.html", {"active_page": "blacklist"})
+
+
+@router.get("/rules")
+def rules(request: Request):
+    return templates.TemplateResponse(request, "rules.html", {"active_page": "rules"})
